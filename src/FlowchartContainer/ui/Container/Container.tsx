@@ -19,6 +19,7 @@ import {
   LayerElement,
   LayerType
 } from "../../model/types/FlowchartContainer"
+import { Layer } from "../Layer/Layer"
 import cls from "./Container.module.css"
 
 interface IAvailableState {
@@ -28,19 +29,10 @@ interface IAvailableState {
   active: boolean
 }
 
-interface ContainerProps {
-  className?: string
-}
-
-export const Container = memo((props: ContainerProps) => {
+export const Container = memo(() => {
   const containerRef = useRef<HTMLDivElement>(null)
-
-  const { className } = props
-
   const [zoom, setZoom] = useState(100)
-  const [minimap, setMinimap] = useState(false)
   const [arrows, setArrows] = useState<LayerArrow[]>([])
-  const [minimapScroll, setMinimapScroll] = useState({ left: 0, top: 0 })
   const [elements, setElements] = useState<LayerElement[]>([])
   const [availableStates, setAvailableStates] = useState<IAvailableState[]>([
     {
@@ -89,7 +81,7 @@ export const Container = memo((props: ContainerProps) => {
     }))
   }
 
-  const handleAddElement = () => {
+  const handleAdd = () => {
     let newElem = {
       left: CELL_SIZE + containerRef.current!.scrollLeft,
       top: CELL_SIZE + containerRef.current!.scrollTop,
@@ -107,7 +99,7 @@ export const Container = memo((props: ContainerProps) => {
     setElements((prev) => [...prev, newElem])
   }
 
-  const handleSaveElement = (element: LayerElement) => {
+  const handleSave = (element: LayerElement) => {
     setElements((prev) => {
       return prev.map((el) =>
         el.element_id === element.element_id
@@ -117,47 +109,44 @@ export const Container = memo((props: ContainerProps) => {
     })
   }
 
-  const handleMoveElement = (props: ElementGap, end: boolean) => {
+  const handleMove = (props: ElementGap) => {
     const { element_id, left, top } = props
 
-    if (end) {
-      setAvailableStates((prev) =>
-        handleState(
-          prev,
-          "elements",
-          elements.map((el) =>
-            el.element_id === element_id ? { ...el, left, top } : el
-          ),
-          "arrows",
-          arrows.map((arrow) => {
-            if (arrow.id_from === element_id || arrow.id_to === element_id) {
-              return { ...arrow, dots: [] }
-            }
-            return arrow
-          })
-        )
-      )
-    } else {
-      setElements((prev) =>
-        prev.map((el) =>
-          el.element_id === element_id
-            ? {
-                ...el,
-                left,
-                top
-              }
-            : el
-        )
-      )
-      setArrows((prev) =>
-        prev.map((arrow) => {
+    setAvailableStates((prev) =>
+      handleState(
+        prev,
+        "elements",
+        elements.map((el) =>
+          el.element_id === element_id ? { ...el, left, top } : el
+        ),
+        "arrows",
+        arrows.map((arrow) => {
           if (arrow.id_from === element_id || arrow.id_to === element_id) {
             return { ...arrow, dots: [] }
           }
           return arrow
         })
       )
-    }
+    )
+    setElements((prev) =>
+      prev.map((el) =>
+        el.element_id === element_id
+          ? {
+              ...el,
+              left,
+              top
+            }
+          : el
+      )
+    )
+    setArrows((prev) =>
+      prev.map((arrow) => {
+        if (arrow.id_from === element_id || arrow.id_to === element_id) {
+          return { ...arrow, dots: [] }
+        }
+        return arrow
+      })
+    )
   }
 
   const handleDelete = (id: number | { from: number; to: number }) => {
@@ -191,7 +180,7 @@ export const Container = memo((props: ContainerProps) => {
     }
   }
 
-  const handleChainElement = (
+  const handleChain = (
     from: number,
     to: number,
     dir_from: "lt" | "rt",
@@ -237,12 +226,6 @@ export const Container = memo((props: ContainerProps) => {
       style={{
         cursor: type === LayerType.DRG ? "grab" : "auto"
       }}
-      onScroll={(e) => {
-        setMinimapScroll({
-          left: containerRef.current?.scrollLeft || 0,
-          top: containerRef.current?.scrollTop || 0
-        })
-      }}
       className={cls.Container}
     >
       <div className={cls.pannel_wrapper}>
@@ -251,7 +234,7 @@ export const Container = memo((props: ContainerProps) => {
             <Button
               icon={<PlusOutlined />}
               onClick={() => {
-                handleAddElement()
+                handleAdd()
               }}
             />
           </Popover>
@@ -389,6 +372,20 @@ export const Container = memo((props: ContainerProps) => {
           />
         </div>
       </div>
+      <Layer
+        type={type}
+        height={layerSize.y}
+        width={layerSize.x}
+        elements={elements}
+        handleSave={handleSave}
+        handleDelete={handleDelete}
+        handleMove={handleMove}
+        handleChain={handleChain}
+        setType={setType}
+        zoom={zoom}
+        arrows={arrows}
+        containerRef={containerRef}
+      />
     </div>
   )
 })

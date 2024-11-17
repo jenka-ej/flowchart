@@ -38,3 +38,8 @@ export interface ElementGap {
   left: number
   top: number
 }
+
+export interface ICoordinate {
+  left: number
+  top: number
+}

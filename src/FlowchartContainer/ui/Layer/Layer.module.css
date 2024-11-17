@@ -1,0 +1,32 @@
+.Layer {
+  background: transparent;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-wrap: wrap;
+  zoom: 1;
+}
+
+.bigline {
+  border: 2px solid var(--color-main);
+  cursor: pointer !important;
+  z-index: 1 !important;
+  box-sizing: content-box !important;
+}
+
+.selected_element {
+  box-shadow: 0 2px var(--secondary-color);
+  border-radius: var(--br-1);
+}
+
+.unselected_element {
+  border: 0;
+  border-radius: 0;
+}
+
+.unselected_element:hover {
+  box-shadow: 0 2px var(--secondary-color);
+  border-radius: var(--br-1);
+  cursor: pointer;
+  transition: all ease 0.3s;
+}

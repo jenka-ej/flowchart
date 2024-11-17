@@ -1,0 +1,64 @@
+.Arrow {
+}
+
+.line {
+  position: absolute;
+  background: gray;
+  z-index: -1;
+}
+
+.line_grab {
+  position: absolute;
+  background: gray;
+  z-index: -1;
+  cursor: grab !important;
+}
+
+.traingle {
+  position: absolute;
+  /* transform: translate(-50%, -50%); */
+  z-index: -1;
+}
+
+.traingle_inner {
+  display: inline-block;
+  border: 5px solid transparent;
+  border-bottom: 5px solid gray;
+}
+
+.line_inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.line_option {
+  left: 50%;
+  top: 50%;
+  width: 20px;
+
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  height: 20px;
+  font-size: var(--fs-12);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: var(--color-gray);
+  color: var(--clr-white);
+}
+
+.dot {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  background: gray;
+  border-radius: 50%;
+  border: 2px solid gray;
+  transform: translate(-50%, -50%);
+}
