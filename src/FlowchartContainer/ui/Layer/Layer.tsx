@@ -5,6 +5,7 @@ import {
   LayerElement,
   LayerType
 } from "../../model/types/FlowchartContainer"
+import { Arrow } from "../Arrow/Arrow"
 import { Element } from "../Element/Element"
 import cls from "./Layer.module.css"
 
@@ -17,7 +18,7 @@ interface LayerProps {
   arrows: LayerArrow[]
   setType: (p: LayerType) => void
   handleMove: (props: ElementGap) => void
-  handleDelete: (id: number | { from: number; to: number }) => void
+  handleDelete: (item: LayerElement | LayerArrow) => void
   handleSave: (el: any) => void
   handleChain: (
     from: number,
@@ -26,13 +27,6 @@ interface LayerProps {
     dir_to: "lt" | "rt"
   ) => void
   containerRef: React.RefObject<HTMLDivElement>
-}
-
-interface SelectedItem {
-  id: number
-  x: number
-  y: number
-  dirn?: "lt" | "rt"
 }
 
 export const Layer = (props: LayerProps) => {
@@ -99,7 +93,7 @@ export const Layer = (props: LayerProps) => {
   return (
     <>
       <div className={cls.Layer} style={{ width, height }}>
-        {elements?.map((element, i) => (
+        {elements?.map((element) => (
           <Element
             key={element.element_id}
             element={element}
@@ -111,36 +105,22 @@ export const Layer = (props: LayerProps) => {
             containerRef={containerRef}
           />
         ))}
-        {arrows.map(({ id, id_from, id_to, dots, pos_from, pos_to }) => {
-          let from = elements.find((el) => id_from === el.element_id)
-          let to = elements.find((el) => id_to === el.element_id)
-          if (from && to) {
-            return (
-              <></>
-              // <Arrow
-              //   className={type === LayerType.DEL ? cls.bigline : ""}
-              //   id={id}
-              //   from={{
-              //     left: from.left,
-              //     top: from.top,
-              //     id: from.element_id
-              //   }}
-              //   to={{
-              //     left: to.left,
-              //     top: to.top,
-              //     id: to.element_id
-              //   }}
-              //   dots={dots}
-              //   pos_from={pos_from}
-              //   pos_to={pos_to}
-              //   option_data={option_data}
-              //   handleDelete={type === LayerType.DEL ? handleDelete : undefined}
-              //   setSelected={setSelected}
-              //   type={type}
-              // />
-            )
-          }
-          return <></>
+        {arrows.map((arrow) => {
+          const elementFrom = elements.find(
+            (element) => arrow.id_from === element.element_id
+          )!
+          const elementTo = elements.find(
+            (element) => arrow.id_to === element.element_id
+          )!
+          return (
+            <Arrow
+              arrow={arrow}
+              elementFrom={elementFrom}
+              elementTo={elementTo}
+              handleDelete={handleDelete}
+              type={type}
+            />
+          )
         })}
       </div>
     </>

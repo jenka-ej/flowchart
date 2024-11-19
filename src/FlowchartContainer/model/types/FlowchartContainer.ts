@@ -9,10 +9,8 @@ export interface LayerArrow {
   id: number
   id_from: number
   id_to: number
-  active?: boolean
   pos_from: "lt" | "rt"
   pos_to: "lt" | "rt"
-  dots?: LineChangeProp[]
 }
 
 export interface LineChangeProp {

@@ -1,23 +1,19 @@
 import { useEffect, useLayoutEffect, useState } from "react"
-import { CELL_SIZE } from "../../const"
+import { ELEM_HEIGHT, ELEM_WIDTH } from "../../const"
 import {
   ElementGap,
   ICoordinate,
+  LayerArrow,
   LayerElement,
   LayerType
 } from "../../model/types/FlowchartContainer"
 import cls from "./Element.module.css"
 
-interface ElementSize {
-  width: number
-  height: number
-}
-
 interface ElementProps {
   element: LayerElement
   type: LayerType
   setSelected: (p: LayerElement | null) => void
-  handleDelete: (element_id: number) => void
+  handleDelete: (item: LayerElement | LayerArrow) => void
   handleMove: (props: ElementGap) => void
   selected: LayerElement | null
   containerRef: React.RefObject<HTMLDivElement>
@@ -86,17 +82,11 @@ export const Element = (props: ElementProps) => {
   }
 
   useLayoutEffect(() => {
-    if (
-      isDragging &&
-      (Math.abs(elementCoordinateOffset.left) >= CELL_SIZE ||
-        Math.abs(elementCoordinateOffset.top) >= CELL_SIZE)
-    ) {
+    if (isDragging) {
       const newMainLeft =
-        elementMainCoordinate.left +
-        Math.round(elementCoordinateOffset.left / CELL_SIZE) * CELL_SIZE
+        elementMainCoordinate.left + Math.round(elementCoordinateOffset.left)
       const newMainTop =
-        elementMainCoordinate.top +
-        Math.round(elementCoordinateOffset.top / CELL_SIZE) * CELL_SIZE
+        elementMainCoordinate.top + Math.round(elementCoordinateOffset.top)
       setElementMainCoordinate({
         left: newMainLeft >= 0 ? newMainLeft : 0,
         top: newMainTop >= 0 ? newMainTop : 0
@@ -115,15 +105,15 @@ export const Element = (props: ElementProps) => {
     <div
       style={{
         transform: `translate(${elementMainCoordinate.left}px, ${elementMainCoordinate.top}px)`,
-        width: "200px",
-        height: "100px"
+        width: ELEM_WIDTH,
+        height: ELEM_HEIGHT
       }}
       className={`${cls.element}`}
     >
       <div
         onClick={() => {
           if (type === LayerType.DEL) {
-            handleDelete(element.element_id)
+            handleDelete(element)
           }
           if (type === LayerType.ITM) {
             setSelected({ ...element })

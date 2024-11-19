@@ -12,7 +12,7 @@ import {
 } from "@ant-design/icons"
 import { Button, Popover } from "antd"
 import { memo, useRef, useState } from "react"
-import { CELL_SIZE, ELEM_HEIGHT, ELEM_WIDTH } from "../../const"
+import { ELEM_HEIGHT, ELEM_WIDTH } from "../../const"
 import {
   ElementGap,
   LayerArrow,
@@ -82,21 +82,19 @@ export const Container = memo(() => {
   }
 
   const handleAdd = () => {
-    let newElem = {
-      left: CELL_SIZE + containerRef.current!.scrollLeft,
-      top: CELL_SIZE + containerRef.current!.scrollTop,
-      width: ELEM_WIDTH,
-      height: ELEM_HEIGHT,
+    const newElement: LayerElement = {
+      left: ELEM_WIDTH + containerRef.current!.scrollLeft,
+      top: ELEM_WIDTH + containerRef.current!.scrollTop,
       element_id: Date.now(),
       element_data: {
         node_id: Date.now()
       }
-    } as LayerElement
+    }
 
     setAvailableStates((prev) =>
-      handleState(prev, "elements", [...elements, newElem])
+      handleState(prev, "elements", [...elements, newElement])
     )
-    setElements((prev) => [...prev, newElem])
+    setElements((prev) => [...prev, newElement])
   }
 
   const handleSave = (element: LayerElement) => {
@@ -122,7 +120,7 @@ export const Container = memo(() => {
         "arrows",
         arrows.map((arrow) => {
           if (arrow.id_from === element_id || arrow.id_to === element_id) {
-            return { ...arrow, dots: [] }
+            return { ...arrow }
           }
           return arrow
         })
@@ -142,27 +140,36 @@ export const Container = memo(() => {
     setArrows((prev) =>
       prev.map((arrow) => {
         if (arrow.id_from === element_id || arrow.id_to === element_id) {
-          return { ...arrow, dots: [] }
+          return { ...arrow }
         }
         return arrow
       })
     )
   }
 
-  const handleDelete = (id: number | { from: number; to: number }) => {
-    if (typeof id === "number") {
+  const handleDelete = (item: LayerElement | LayerArrow) => {
+    if ("element_id" in item) {
       setAvailableStates((prev) =>
         handleState(
           prev,
           "elements",
-          elements.filter((el) => el.element_id !== id),
+          elements.filter((element) => element.element_id !== item.element_id),
           "arrows",
-          arrows.filter((arr) => arr.id_from !== id && arr.id_to !== id)
+          arrows.filter(
+            (arrow) =>
+              arrow.id_from !== item.element_id &&
+              arrow.id_to !== item.element_id
+          )
         )
       )
-      setElements((prev) => prev.filter((el) => el.element_id !== id))
+      setElements((prev) =>
+        prev.filter((element) => element.element_id !== item.element_id)
+      )
       setArrows((prev) =>
-        prev.filter((arr) => arr.id_from !== id && arr.id_to !== id)
+        prev.filter(
+          (arrow) =>
+            arrow.id_from !== item.element_id && arrow.id_to !== item.element_id
+        )
       )
     } else {
       setAvailableStates((prev) =>
@@ -170,12 +177,16 @@ export const Container = memo(() => {
           prev,
           "arrows",
           arrows.filter(
-            (arr) => !(arr.id_from === id.from && arr.id_to === id.to)
+            (arrow) =>
+              !(arrow.id_from === item.id_from && arrow.id_to === item.id_to)
           )
         )
       )
       setArrows((prev) =>
-        prev.filter((arr) => !(arr.id_from === id.from && arr.id_to === id.to))
+        prev.filter(
+          (arrow) =>
+            !(arrow.id_from === item.id_from && arrow.id_to === item.id_to)
+        )
       )
     }
   }

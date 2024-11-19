@@ -1,26 +1,19 @@
 import { ELEM_HEIGHT, ELEM_WIDTH } from "../const"
+import { LayerElement } from "../model/types/FlowchartContainer"
 
 export const formStartEndDots = (
-  from: {
-    left: number
-    top: number
-    id: number
-  },
-  to: {
-    left: number
-    top: number
-    id: number
-  },
+  elementFrom: LayerElement,
+  elementTo: LayerElement,
   pos_from: "lt" | "rt",
   pos_to: "lt" | "rt"
 ) => {
   const startCords = {
-    left: pos_from === "lt" ? from.left : from.left + ELEM_WIDTH,
-    top: from.top + ELEM_HEIGHT / 2
+    left: pos_from === "lt" ? elementFrom.left : elementFrom.left + ELEM_WIDTH,
+    top: elementFrom.top + ELEM_HEIGHT / 2
   }
   const endCords = {
-    left: pos_to === "lt" ? to.left : to.left + ELEM_WIDTH,
-    top: to.top + ELEM_HEIGHT / 2
+    left: pos_to === "lt" ? elementTo.left : elementTo.left + ELEM_WIDTH,
+    top: elementTo.top + ELEM_HEIGHT / 2
   }
 
   return { start: startCords, end: endCords }
@@ -93,20 +86,17 @@ export const formStartEndDots = (
 // }
 
 export const formArrowDots = (
-  from: {
-    left: number
-    top: number
-    id: number
-  },
-  to: {
-    left: number
-    top: number
-    id: number
-  },
+  elementFrom: LayerElement,
+  elementTo: LayerElement,
   pos_from: "lt" | "rt",
   pos_to: "lt" | "rt"
 ): { left: number; top: number }[] | undefined => {
-  const { end, start } = formStartEndDots(from, to, pos_from, pos_to)
+  const { end, start } = formStartEndDots(
+    elementFrom,
+    elementTo,
+    pos_from,
+    pos_to
+  )
 
   let dots = undefined as { left: number; top: number }[] | undefined
   if (pos_from === "lt" && pos_to === "lt") {
@@ -382,95 +372,6 @@ export const formLines = (
     .filter(Boolean)
 
   return { pathDots: dots, lines }
-}
-
-export const identifySectorOfElement = (x: number, y: number) => {
-  if (x >= 0 && x <= 50 && y >= 0 && y <= 50) {
-    return 1
-  } else if (x > 50 && x <= 100 && y >= 0 && y <= 50) {
-    return 2
-  } else if (x > 100 && x <= 150 && y >= 0 && y <= 50) {
-    return 3
-  } else if (x > 150 && x <= 200 && y >= 0 && y <= 50) {
-    return 4
-  } else if (x >= 0 && x <= 50 && y > 50 && y <= 100) {
-    return 5
-  } else if (x > 50 && x <= 100 && y > 50 && y <= 100) {
-    return 6
-  } else if (x > 100 && x <= 150 && y > 50 && y <= 100) {
-    return 7
-  } else if (x > 150 && x <= 200 && y > 50 && y <= 100) {
-    return 8
-  } else {
-    return 1
-  }
-}
-
-export const identifyXOffsetOfElement = (sector: number) => {
-  if (sector === 1 || sector === 5) {
-    return 0
-  } else if (sector === 2 || sector === 6) {
-    return 50
-  } else if (sector === 3 || sector === 7) {
-    return 100
-  } else {
-    return 150
-  }
-}
-
-export const identifyYOffsetOfElement = (sector: number) => {
-  if (sector === 1 || sector === 2 || sector === 3 || sector === 4) {
-    return 0
-  } else {
-    return 50
-  }
-}
-
-export const calculateXSectorOffset = (sector: number) => {
-  if (sector === 1 || sector === 5) {
-    return 0
-  } else if (sector === 2 || sector === 6) {
-    return 30
-  } else if (sector === 3 || sector === 7) {
-    return 70
-  } else {
-    return 100
-  }
-}
-
-export const calculateYSectorOffset = (sector: number) => {
-  if (sector === 1 || sector === 2 || sector === 3 || sector === 4) {
-    return 0
-  } else {
-    return 25
-  }
-}
-
-export const ratioXCoordinate = (zoom: number) => {
-  switch (zoom) {
-    case 100:
-      return 1
-    case 95:
-      return 1
-    case 90:
-      return 1
-    case 85:
-      return 1
-    case 80:
-      return 1
-    case 75:
-      return 1
-    case 70:
-      return 1
-    case 65:
-      return 1
-    case 60:
-      return 1
-    case 55:
-      return 1
-    default:
-      return 1
-  }
 }
 
 // OLD POSITIONS
