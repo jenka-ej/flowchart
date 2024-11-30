@@ -1,5 +1,6 @@
 import { useState } from "react"
 import {
+  ChainLayerElement,
   ElementGap,
   LayerArrow,
   LayerElement,
@@ -17,14 +18,12 @@ interface LayerProps {
   elements: LayerElement[]
   arrows: LayerArrow[]
   setType: (p: LayerType) => void
-  handleMove: (props: ElementGap) => void
+  handleMove: (props: ElementGap, endMove: boolean) => void
   handleDelete: (item: LayerElement | LayerArrow) => void
   handleSave: (el: any) => void
   handleChain: (
-    from: number,
-    to: number,
-    dir_from: "lt" | "rt",
-    dir_to: "lt" | "rt"
+    chainedElementFrom: ChainLayerElement,
+    chainedElementTo: ChainLayerElement
   ) => void
   containerRef: React.RefObject<HTMLDivElement>
 }
@@ -46,49 +45,9 @@ export const Layer = (props: LayerProps) => {
   } = props
 
   const [selected, setSelected] = useState<LayerElement | null>(null)
-
-  // const chainElements = (
-  //   e: any,
-  //   element_id: number,
-  //   direction: "lt" | "rt"
-  // ) => {
-  //   let x = 0,
-  //     y = 0
-  //   const width = e.target.parentNode.offsetWidth
-  //   const height = e.target.parentNode.offsetHeight
-  //   x = width / 2
-  //   y = height / 2
-
-  //   setSelected((prev) => {
-  //     if (!prev?.[0]?.dirn) {
-  //       return [
-  //         {
-  //           id: element_id,
-  //           x,
-  //           y,
-  //           dirn: direction
-  //         }
-  //       ]
-  //     }
-
-  //     if (prev?.length === 0) {
-  //       return [
-  //         {
-  //           id: element_id,
-  //           x,
-  //           y,
-  //           dirn: direction
-  //         }
-  //       ]
-  //     } else if (prev?.[0]?.id !== element_id) {
-  //       typeof prev?.[0]?.id === "number" &&
-  //         prev?.[0]?.dirn &&
-  //         handleChain(prev?.[0]?.id, element_id, prev?.[0]?.dirn, direction)
-
-  //       return []
-  //     } else return prev
-  //   })
-  // }
+  const [selectedChain, setSelectedChain] = useState<ChainLayerElement | null>(
+    null
+  )
 
   return (
     <>
@@ -103,6 +62,9 @@ export const Layer = (props: LayerProps) => {
             handleMove={handleMove}
             selected={selected}
             containerRef={containerRef}
+            selectedChain={selectedChain}
+            setSelectedChain={setSelectedChain}
+            handleChain={handleChain}
           />
         ))}
         {arrows.map((arrow) => {

@@ -2,8 +2,6 @@ import {
   DeleteOutlined,
   EditOutlined,
   FullscreenOutlined,
-  InfoCircleOutlined,
-  MinusOutlined,
   NodeIndexOutlined,
   PlusOutlined,
   RedoOutlined,
@@ -14,6 +12,7 @@ import { Button, Popover } from "antd"
 import { memo, useRef, useState } from "react"
 import { ELEM_HEIGHT, ELEM_WIDTH } from "../../const"
 import {
+  ChainLayerElement,
   ElementGap,
   LayerArrow,
   LayerElement,
@@ -107,44 +106,47 @@ export const Container = memo(() => {
     })
   }
 
-  const handleMove = (props: ElementGap) => {
+  const handleMove = (props: ElementGap, endMove: boolean) => {
     const { element_id, left, top } = props
 
-    setAvailableStates((prev) =>
-      handleState(
-        prev,
-        "elements",
-        elements.map((el) =>
-          el.element_id === element_id ? { ...el, left, top } : el
-        ),
-        "arrows",
-        arrows.map((arrow) => {
+    if (endMove) {
+      setAvailableStates((prev) =>
+        handleState(
+          prev,
+          "elements",
+          elements.map((el) =>
+            el.element_id === element_id ? { ...el, left, top } : el
+          ),
+          "arrows",
+          arrows.map((arrow) => {
+            if (arrow.id_from === element_id || arrow.id_to === element_id) {
+              return { ...arrow }
+            }
+            return arrow
+          })
+        )
+      )
+    } else {
+      setElements((prev) =>
+        prev.map((el) =>
+          el.element_id === element_id
+            ? {
+                ...el,
+                left,
+                top
+              }
+            : el
+        )
+      )
+      setArrows((prev) =>
+        prev.map((arrow) => {
           if (arrow.id_from === element_id || arrow.id_to === element_id) {
             return { ...arrow }
           }
           return arrow
         })
       )
-    )
-    setElements((prev) =>
-      prev.map((el) =>
-        el.element_id === element_id
-          ? {
-              ...el,
-              left,
-              top
-            }
-          : el
-      )
-    )
-    setArrows((prev) =>
-      prev.map((arrow) => {
-        if (arrow.id_from === element_id || arrow.id_to === element_id) {
-          return { ...arrow }
-        }
-        return arrow
-      })
-    )
+    }
   }
 
   const handleDelete = (item: LayerElement | LayerArrow) => {
@@ -192,40 +194,46 @@ export const Container = memo(() => {
   }
 
   const handleChain = (
-    from: number,
-    to: number,
-    dir_from: "lt" | "rt",
-    dir_to: "lt" | "rt"
+    chainedElementFrom: ChainLayerElement,
+    chainedElementTo: ChainLayerElement
   ) => {
     setAvailableStates((prev) =>
       handleState(
         prev,
         "arrows",
-        arrows.some((el) => el.id_from === from && el.id_to === to)
+        arrows.some(
+          (arrow) =>
+            arrow.id_from === chainedElementFrom.element_id &&
+            arrow.id_to === chainedElementTo.element_id
+        )
           ? arrows
           : [
               ...arrows,
               {
-                id_from: from,
-                id_to: to,
+                id_from: chainedElementFrom.element_id,
+                id_to: chainedElementTo.element_id,
                 id: Date.now(),
-                pos_from: dir_from,
-                pos_to: dir_to
+                pos_from: chainedElementFrom.direction,
+                pos_to: chainedElementTo.direction
               }
             ]
       )
     )
     setArrows((prev) =>
-      prev.some((el) => el.id_from === from && el.id_to === to)
+      prev.some(
+        (arrow) =>
+          arrow.id_from === chainedElementFrom.element_id &&
+          arrow.id_to === chainedElementTo.element_id
+      )
         ? prev
         : [
             ...prev,
             {
-              id_from: from,
-              id_to: to,
+              id_from: chainedElementFrom.element_id,
+              id_to: chainedElementTo.element_id,
               id: Date.now(),
-              pos_from: dir_from,
-              pos_to: dir_to
+              pos_from: chainedElementFrom.direction,
+              pos_to: chainedElementTo.direction
             }
           ]
     )
@@ -339,48 +347,27 @@ export const Container = memo(() => {
               }}
             />
           </Popover>
-        </div>
-        <div
-          className={cls.panel}
-          style={{
-            position: "relative",
-            left: "calc(100% - 290px)",
-            top: "-42px"
-          }}
-        >
-          <Button
-            icon={<InfoCircleOutlined />}
-            type={type === LayerType.INFO ? "primary" : "default"}
-            onClick={() => {
-              setType(LayerType.INFO)
+          {/* <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center"
             }}
           >
-            Информация
-          </Button>
-        </div>
-        <div
-          className={cls.panel_scale}
-          style={{
-            position: "relative",
-            left: "calc(100% - 144px)",
-            bottom: "calc(100% - 540px)"
-          }}
-        >
-          <Button
-            icon={<MinusOutlined />}
-            onClick={() => {
-              setZoom((prev) => (prev === 50 ? prev : prev - 5))
-            }}
-          />
-          <h3 style={{ margin: "0", width: "50px", textAlign: "center" }}>
-            {zoom} %
-          </h3>
-          <Button
-            icon={<PlusOutlined />}
-            onClick={() => {
-              setZoom((prev) => (prev === 100 ? prev : prev + 5))
-            }}
-          />
+            <Button
+              icon={<MinusOutlined />}
+              onClick={() => {
+                setZoom((prev) => (prev === 50 ? prev : prev - 5))
+              }}
+            />
+            <div style={{ fontSize: "16px", color: "black" }}>{zoom} %</div>
+            <Button
+              icon={<PlusOutlined />}
+              onClick={() => {
+                setZoom((prev) => (prev === 100 ? prev : prev + 5))
+              }}
+            />
+          </div> */}
         </div>
       </div>
       <Layer

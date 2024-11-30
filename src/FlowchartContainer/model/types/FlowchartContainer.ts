@@ -19,6 +19,10 @@ export interface LineChangeProp {
   dot_index: number[]
 }
 
+export type ChainLayerElement = LayerElement & {
+  direction: "lt" | "rt"
+}
+
 export enum LayerType {
   MOVE = "MOVE",
   DRG = "DRG",

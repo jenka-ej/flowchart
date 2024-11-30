@@ -3,11 +3,12 @@
   z-index: 100;
   border-radius: 10px;
   box-shadow: rgba(0, 0, 0, 0.15) 0px 1px 6px 1px;
-  background: #d3e100;
 }
 
 .element_outer {
   position: relative;
+  width: 100%;
+  height: 100%;
 }
 
 .element_inner {
@@ -27,4 +28,80 @@
 .unselected_element {
   border: 0;
   border-radius: 0;
+}
+
+.marker_top {
+  width: 20px;
+  height: 20px;
+  background: gray;
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  z-index: 100;
+  display: none;
+  border-radius: 50%;
+  opacity: 0.5;
+  transform: translate(-50%, -10px);
+  cursor: pointer;
+}
+
+.marker_bottom {
+  width: 20px;
+  height: 20px;
+  background: gray;
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  z-index: 100;
+  display: none;
+  border-radius: 50%;
+  opacity: 0.5;
+  transform: translate(-50%, 10px);
+  cursor: pointer;
+}
+
+.marker_left {
+  width: 20px;
+  height: 20px;
+  background: gray;
+  position: absolute;
+  bottom: 50%;
+  left: 10px;
+  z-index: 100;
+  display: none;
+  border-radius: 50%;
+  opacity: 0.5;
+  transform: translate(-10px, 50%);
+  cursor: pointer;
+}
+
+.marker_right {
+  width: 20px;
+  height: 20px;
+  background: gray;
+  position: absolute;
+  right: 10px;
+  bottom: 50%;
+  z-index: 100;
+  display: none;
+  border-radius: 50%;
+  opacity: 0.5;
+  transform: translate(10px, 50%);
+  cursor: pointer;
+}
+
+.element_outer:hover .marker_right,
+.element_outer:hover .marker_bottom,
+.element_outer:hover .marker_top,
+.element_outer:hover .marker_left {
+  display: block;
+}
+
+.marker_right:hover,
+.marker_left:hover,
+.marker_top:hover,
+.marker_bottom:hover {
+  background: blue;
+  opacity: 1;
+  cursor: pointer;
 }
