@@ -5,12 +5,6 @@
   box-shadow: rgba(0, 0, 0, 0.15) 0px 1px 6px 1px;
 }
 
-.element_outer {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
 .element_inner {
   width: 100%;
   height: 100%;
@@ -18,6 +12,12 @@
   padding: 7px;
 
   overflow: hidden;
+}
+
+.element_outer {
+  width: 100%;
+  height: 100%;
+  position: relative;
 }
 
 .selected_element {
@@ -90,10 +90,14 @@
   cursor: pointer;
 }
 
-.element_outer:hover .marker_right,
-.element_outer:hover .marker_bottom,
-.element_outer:hover .marker_top,
-.element_outer:hover .marker_left {
+.element:hover {
+  box-shadow: #1677ff 0px 1px 2px 1px;
+}
+
+.element:hover .marker_right,
+.element:hover .marker_bottom,
+.element:hover .marker_top,
+.element:hover .marker_left {
   display: block;
 }
 
@@ -101,7 +105,13 @@
 .marker_left:hover,
 .marker_top:hover,
 .marker_bottom:hover {
-  background: blue;
+  background: #1677ff;
   opacity: 1;
   cursor: pointer;
+}
+
+.selected_marker {
+  display: block;
+  background: #1677ff;
+  opacity: 1;
 }

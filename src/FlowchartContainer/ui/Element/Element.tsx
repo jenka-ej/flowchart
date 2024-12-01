@@ -92,59 +92,60 @@ export const Element = (props: ElementProps) => {
         height: ELEM_HEIGHT
       }}
       className={`${cls.element}`}
+      onClick={() => {
+        if (type === LayerType.DEL) {
+          handleDelete(element)
+        }
+        if (type === LayerType.ITM) {
+          setSelected({ ...element })
+        }
+      }}
+      draggable={type === LayerType.MOVE}
+      onDragStart={handleDragStart}
+      onDrag={handleDrag}
+      onDragEnd={handleDragEnd}
     >
-      <div
-        onClick={() => {
-          if (type === LayerType.DEL) {
-            handleDelete(element)
-          }
-          if (type === LayerType.ITM) {
-            setSelected({ ...element })
-          }
-        }}
-        draggable={type === LayerType.MOVE}
-        onDragStart={handleDragStart}
-        onDrag={handleDrag}
-        onDragEnd={handleDragEnd}
-        key={element.element_id}
-        style={{ width: "100%", height: "100%" }}
-      >
-        <div className={cls.element_outer}>
-          {type === LayerType.CHAIN && (
-            <>
-              <div
-                className={cls.marker_left}
-                onClick={() => {
-                  if (
-                    selectedChain &&
-                    selectedChain.element_id !== element.element_id
-                  ) {
-                    handleChain(selectedChain, { ...element, direction: "lt" })
-                    setSelectedChain(null)
-                  } else {
-                    setSelectedChain({ ...element, direction: "lt" })
-                  }
-                }}
-              />
-              <div
-                className={cls.marker_right}
-                onClick={() => {
-                  if (
-                    selectedChain &&
-                    selectedChain.element_id !== element.element_id
-                  ) {
-                    handleChain(selectedChain, { ...element, direction: "rt" })
-                    setSelectedChain(null)
-                  } else {
-                    setSelectedChain({ ...element, direction: "rt" })
-                  }
-                }}
-              />
-            </>
-          )}
-          <div className={cls.element_inner}></div>
-        </div>
-      </div>
+      {type === LayerType.CHAIN && (
+        <>
+          <div
+            className={`${cls.marker_left} ${
+              selectedChain?.element_id === element.element_id &&
+              selectedChain?.direction === "lt" &&
+              cls.selected_marker
+            }`}
+            onClick={() => {
+              if (
+                selectedChain &&
+                selectedChain.element_id !== element.element_id
+              ) {
+                handleChain(selectedChain, { ...element, direction: "lt" })
+                setSelectedChain(null)
+              } else {
+                setSelectedChain({ ...element, direction: "lt" })
+              }
+            }}
+          />
+          <div
+            className={`${cls.marker_right} ${
+              selectedChain?.element_id === element.element_id &&
+              selectedChain?.direction === "rt" &&
+              cls.selected_marker
+            }`}
+            onClick={() => {
+              if (
+                selectedChain &&
+                selectedChain.element_id !== element.element_id
+              ) {
+                handleChain(selectedChain, { ...element, direction: "rt" })
+                setSelectedChain(null)
+              } else {
+                setSelectedChain({ ...element, direction: "rt" })
+              }
+            }}
+          />
+        </>
+      )}
+      <div className={cls.element_inner}></div>
     </div>
   )
 }

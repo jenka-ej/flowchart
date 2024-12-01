@@ -51,8 +51,12 @@ export const Arrow = (props: ArrowProps) => {
           />
         )
       })}
-      <div className={cls.traingle} style={arrowStyles}>
-        <div className={cls.traingle_inner} />
+      <div className={cls.triangle} style={arrowStyles}>
+        <div
+          className={
+            type === LayerType.DEL ? cls.bigtriangle_inner : cls.triangle_inner
+          }
+        />
       </div>
     </>
   )

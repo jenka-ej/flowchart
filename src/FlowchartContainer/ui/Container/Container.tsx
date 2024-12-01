@@ -254,6 +254,7 @@ export const Container = memo(() => {
               icon={<PlusOutlined />}
               onClick={() => {
                 handleAdd()
+                setType(LayerType.MOVE)
               }}
             />
           </Popover>

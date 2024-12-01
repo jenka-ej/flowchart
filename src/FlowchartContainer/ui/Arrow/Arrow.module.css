@@ -7,6 +7,13 @@
   z-index: -1;
 }
 
+.bigline {
+  position: absolute;
+  background: #1677ff;
+  border: 2px solid #1677ff;
+  cursor: pointer !important;
+}
+
 .line_grab {
   position: absolute;
   background: gray;
@@ -14,16 +21,22 @@
   cursor: grab !important;
 }
 
-.traingle {
+.triangle {
   position: absolute;
   /* transform: translate(-50%, -50%); */
   z-index: -1;
 }
 
-.traingle_inner {
+.triangle_inner {
   display: inline-block;
   border: 5px solid transparent;
   border-bottom: 5px solid gray;
+}
+
+.bigtriangle_inner {
+  display: inline-block;
+  border: 8px solid transparent;
+  border-bottom: 8px solid #1677ff;
 }
 
 .line_inner {
