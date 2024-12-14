@@ -30,7 +30,7 @@
   border-radius: 0;
 }
 
-.marker_top {
+.marker_up {
   width: 20px;
   height: 20px;
   background: gray;
@@ -96,14 +96,14 @@
 
 .element:hover .marker_right,
 .element:hover .marker_bottom,
-.element:hover .marker_top,
+.element:hover .marker_up,
 .element:hover .marker_left {
   display: block;
 }
 
 .marker_right:hover,
 .marker_left:hover,
-.marker_top:hover,
+.marker_up:hover,
 .marker_bottom:hover {
   background: #1677ff;
   opacity: 1;

@@ -143,6 +143,42 @@ export const Element = (props: ElementProps) => {
               }
             }}
           />
+          <div
+            className={`${cls.marker_up} ${
+              selectedChain?.element_id === element.element_id &&
+              selectedChain?.direction === "up" &&
+              cls.selected_marker
+            }`}
+            onClick={() => {
+              if (
+                selectedChain &&
+                selectedChain.element_id !== element.element_id
+              ) {
+                handleChain(selectedChain, { ...element, direction: "up" })
+                setSelectedChain(null)
+              } else {
+                setSelectedChain({ ...element, direction: "up" })
+              }
+            }}
+          />
+          <div
+            className={`${cls.marker_bottom} ${
+              selectedChain?.element_id === element.element_id &&
+              selectedChain?.direction === "bt" &&
+              cls.selected_marker
+            }`}
+            onClick={() => {
+              if (
+                selectedChain &&
+                selectedChain.element_id !== element.element_id
+              ) {
+                handleChain(selectedChain, { ...element, direction: "bt" })
+                setSelectedChain(null)
+              } else {
+                setSelectedChain({ ...element, direction: "bt" })
+              }
+            }}
+          />
         </>
       )}
       <div className={cls.element_inner}></div>

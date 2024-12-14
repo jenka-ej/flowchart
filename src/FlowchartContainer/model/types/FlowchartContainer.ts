@@ -9,18 +9,12 @@ export interface LayerArrow {
   id: number
   id_from: number
   id_to: number
-  pos_from: "lt" | "rt"
-  pos_to: "lt" | "rt"
-}
-
-export interface LineChangeProp {
-  gap: number
-  direction: "left" | "top"
-  dot_index: number[]
+  pos_from: "lt" | "rt" | "up" | "bt"
+  pos_to: "lt" | "rt" | "up" | "bt"
 }
 
 export type ChainLayerElement = LayerElement & {
-  direction: "lt" | "rt"
+  direction: "lt" | "rt" | "up" | "bt"
 }
 
 export enum LayerType {
