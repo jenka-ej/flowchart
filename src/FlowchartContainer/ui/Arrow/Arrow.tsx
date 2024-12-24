@@ -26,7 +26,15 @@ export const Arrow = (props: ArrowProps) => {
   let arrowStyles = {
     left: end.left - 5,
     top: end.top - 12,
-    rotate: `${arrow.pos_to === "lt" ? 90 : -90}deg`
+    rotate: `${
+      arrow.pos_to === "lt"
+        ? 90
+        : arrow.pos_to === "up"
+        ? 180
+        : arrow.pos_to === "rt"
+        ? 270
+        : 0
+    }deg`
   }
 
   let dots = formArrowDots(elementFrom, elementTo, arrow.pos_from, arrow.pos_to)

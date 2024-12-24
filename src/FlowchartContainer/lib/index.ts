@@ -114,6 +114,41 @@ export const formArrowDots = (
     }
   }
   if (pos_from === "lt" && pos_to === "up") {
+    if (dx < -100 && dy > 50) {
+      return [
+        start,
+        createDot(start.left - 50, start.top),
+        createDot(start.left - 50, end.top - 50),
+        createDot(end.left, end.top - 50),
+        end
+      ]
+    } else if (dx > -100 && dy > 150) {
+      return [
+        start,
+        createDot(end.left - 150, start.top),
+        createDot(end.left - 150, end.top - 50),
+        createDot(end.left, end.top - 50),
+        end
+      ]
+    } else if (dx < -250 && dy < 50) {
+      return [
+        start,
+        createDot(start.left - 50, start.top),
+        createDot(start.left - 50, start.top - 100),
+        createDot(end.left, start.top - 100),
+        end
+      ]
+    } else if (dx > 50 && dy < -50) {
+      return [start, createDot(end.left, start.top), end]
+    } else {
+      return [
+        start,
+        createDot(start.left - 50, start.top),
+        createDot(start.left - 50, end.top - 50),
+        createDot(end.left, end.top - 50),
+        end
+      ]
+    }
   }
   if (pos_from === "lt" && pos_to === "bt") {
   }
