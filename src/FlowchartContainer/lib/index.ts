@@ -293,6 +293,41 @@ export const formArrowDots = (
   if (pos_from === "up" && pos_to === "lt") {
   }
   if (pos_from === "up" && pos_to === "rt") {
+    if (dx < -100 && dy < -50) {
+      return [
+        start,
+        createDot(start.left, start.top - 50),
+        createDot(end.left + 50, start.top - 50),
+        createDot(end.left + 50, end.top),
+        end
+      ]
+    } else if (dx < -250 && dy > -50) {
+      return [
+        start,
+        createDot(start.left, end.top - 100),
+        createDot(end.left + 50, end.top - 100),
+        createDot(end.left + 50, end.top),
+        end
+      ]
+    } else if (dx > -100 && dy < -200) {
+      return [
+        start,
+        createDot(start.left, start.top - 50),
+        createDot(start.left + 150, start.top - 50),
+        createDot(start.left + 150, end.top),
+        end
+      ]
+    } else if (dx > 50 && dy > 50) {
+      return [start, createDot(start.left, end.top), end]
+    } else {
+      return [
+        start,
+        createDot(start.left, start.top - 50),
+        createDot(end.left + 50, start.top - 50),
+        createDot(end.left + 50, end.top),
+        end
+      ]
+    }
   }
   if (pos_from === "bt" && pos_to === "bt") {
     if (Math.abs(dx) < 150 && dy > 150) {
@@ -362,6 +397,41 @@ export const formArrowDots = (
     }
   }
   if (pos_from === "bt" && pos_to === "lt") {
+    if (dx > 150 && dy > 50) {
+      return [
+        start,
+        createDot(start.left, start.top + 50),
+        createDot(end.left - 50, start.top + 50),
+        createDot(end.left - 50, end.top),
+        end
+      ]
+    } else if (dx > 250 && dy > -150) {
+      return [
+        start,
+        createDot(start.left, end.top + 100),
+        createDot(end.left - 50, end.top + 100),
+        createDot(end.left - 50, end.top),
+        end
+      ]
+    } else if (dx < 100 && dy > 200) {
+      return [
+        start,
+        createDot(start.left, start.top + 50),
+        createDot(start.left - 150, start.top + 50),
+        createDot(start.left - 150, end.top),
+        end
+      ]
+    } else if (dx < -50 && dy < -50) {
+      return [start, createDot(start.left, end.top), end]
+    } else {
+      return [
+        start,
+        createDot(start.left, start.top + 50),
+        createDot(end.left - 50, start.top + 50),
+        createDot(end.left - 50, end.top),
+        end
+      ]
+    }
   }
   if (pos_from === "bt" && pos_to === "rt") {
   }
