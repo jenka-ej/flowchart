@@ -1,22 +1,26 @@
-import { useState } from "react"
-import { ELEM_HEIGHT, ELEM_WIDTH } from "../../const"
+import { DeleteOutlined } from "@ant-design/icons"
+import { Button, Popover, Select } from "antd"
+import { useRef, useState } from "react"
+import {
+  CELL_SIZE,
+  ELEM_HEIGHT,
+  ELEM_WIDTH,
+  ELEMENT_MARKER_TYPES,
+  ELEMENT_TYPE_DATA
+} from "../../const"
 import {
   ChainLayerElement,
-  ElementGap,
+  IClickedElement,
   ICoordinate,
   LayerArrow,
-  LayerElement,
-  LayerType
+  LayerElement
 } from "../../model/types/FlowchartContainer"
 import cls from "./Element.module.css"
 
 interface ElementProps {
   element: LayerElement
-  type: LayerType
-  setSelected: (p: LayerElement | null) => void
   handleDelete: (item: LayerElement | LayerArrow) => void
-  handleMove: (props: ElementGap, endMove: boolean) => void
-  selected: LayerElement | null
+  handleMove: (props: LayerElement, end: boolean) => void
   containerRef: React.RefObject<HTMLDivElement>
   setSelectedChain: (p: ChainLayerElement | null) => void
   selectedChain: ChainLayerElement | null
@@ -24,19 +28,36 @@ interface ElementProps {
     chainedElementFrom: ChainLayerElement,
     chainedElementTo: ChainLayerElement
   ) => void
+  handleSave: (el: any) => void
+  setClickedElement: (p: IClickedElement | null) => void
+  clickedElement: IClickedElement | null
+}
+
+const identifyMarkerCls = (markerType: "lt" | "up" | "rt" | "bt") => {
+  switch (markerType) {
+    case "lt":
+      return cls.marker_left
+    case "up":
+      return cls.marker_up
+    case "rt":
+      return cls.marker_right
+    default:
+      return cls.marker_bottom
+  }
 }
 
 export const Element = (props: ElementProps) => {
   const {
     element,
-    type,
     handleDelete,
     handleMove,
-    setSelected,
     containerRef,
     setSelectedChain,
     selectedChain,
-    handleChain
+    handleChain,
+    setClickedElement,
+    clickedElement,
+    handleSave
   } = props
   const [elementStartCoordinate, setElementStartCoordinate] =
     useState<ICoordinate>({
@@ -44,6 +65,18 @@ export const Element = (props: ElementProps) => {
       top: 0
     })
   const [isDragging, setIsDragging] = useState(false)
+  const elementRef = useRef<HTMLDivElement>(null)
+  const thisElementClicked = Boolean(
+    clickedElement &&
+      "elementId" in clickedElement.element &&
+      clickedElement.element.elementId === element.elementId
+  )
+  const thisElementNotChained = Boolean(
+    selectedChain && selectedChain?.elementId !== element.elementId
+  )
+  const thisElementIsChained = Boolean(
+    selectedChain && selectedChain?.elementId === element.elementId
+  )
 
   const handleDragStart = (event: React.DragEvent<HTMLDivElement>) => {
     setElementStartCoordinate({
@@ -51,25 +84,36 @@ export const Element = (props: ElementProps) => {
       top: event.clientY - element.top + containerRef.current!.scrollTop
     })
     setIsDragging(true)
+    setSelectedChain(null)
+    setClickedElement(null)
   }
 
   const handleDrag = (event: React.DragEvent<HTMLDivElement>) => {
     if (isDragging && event.screenX && event.screenY) {
       requestAnimationFrame(() => {
-        const newMainLeft =
-          element.left +
-          Math.floor(event.nativeEvent.offsetX - elementStartCoordinate.left)
-        const newMainTop =
-          element.top +
-          Math.floor(event.nativeEvent.offsetY - elementStartCoordinate.top)
-        handleMove(
-          {
-            ...element,
-            left: newMainLeft >= 0 ? newMainLeft : 0,
-            top: newMainTop >= 0 ? newMainTop : 0
-          },
-          false
+        const leftCoordinateOffset = Math.floor(
+          event.nativeEvent.offsetX - elementStartCoordinate.left
         )
+        const topCoordinateOffset = Math.floor(
+          event.nativeEvent.offsetY - elementStartCoordinate.top
+        )
+        if (
+          Math.abs(leftCoordinateOffset) >= CELL_SIZE ||
+          Math.abs(topCoordinateOffset) >= CELL_SIZE
+        ) {
+          handleMove(
+            {
+              ...element,
+              left:
+                element.left +
+                Math.round(leftCoordinateOffset / CELL_SIZE) * CELL_SIZE,
+              top:
+                element.top +
+                Math.round(topCoordinateOffset / CELL_SIZE) * CELL_SIZE
+            },
+            false
+          )
+        }
       })
     }
   }
@@ -85,103 +129,99 @@ export const Element = (props: ElementProps) => {
   }
 
   return (
-    <div
-      style={{
-        transform: `translate(${element.left}px, ${element.top}px)`,
-        width: ELEM_WIDTH,
-        height: ELEM_HEIGHT
-      }}
-      className={`${cls.element}`}
-      onClick={() => {
-        if (type === LayerType.DEL) {
-          handleDelete(element)
-        }
-        if (type === LayerType.ITM) {
-          setSelected({ ...element })
-        }
-      }}
-      draggable={type === LayerType.MOVE}
-      onDragStart={handleDragStart}
-      onDrag={handleDrag}
-      onDragEnd={handleDragEnd}
-    >
-      {type === LayerType.CHAIN && (
+    <Popover
+      placement="right"
+      overlayInnerStyle={{ boxShadow: "none" }}
+      showArrow={false}
+      content={
         <>
+          <div className={cls.popover_div}>
+            <Select
+              onChange={(e) => {
+                handleSave({ ...element, elementData: { type: e } })
+              }}
+              options={ELEMENT_TYPE_DATA}
+            />
+          </div>
           <div
-            className={`${cls.marker_left} ${
-              selectedChain?.element_id === element.element_id &&
-              selectedChain?.direction === "lt" &&
-              cls.selected_marker
-            }`}
-            onClick={() => {
-              if (
-                selectedChain &&
-                selectedChain.element_id !== element.element_id
-              ) {
-                handleChain(selectedChain, { ...element, direction: "lt" })
-                setSelectedChain(null)
-              } else {
-                setSelectedChain({ ...element, direction: "lt" })
-              }
-            }}
-          />
-          <div
-            className={`${cls.marker_right} ${
-              selectedChain?.element_id === element.element_id &&
-              selectedChain?.direction === "rt" &&
-              cls.selected_marker
-            }`}
-            onClick={() => {
-              if (
-                selectedChain &&
-                selectedChain.element_id !== element.element_id
-              ) {
-                handleChain(selectedChain, { ...element, direction: "rt" })
-                setSelectedChain(null)
-              } else {
-                setSelectedChain({ ...element, direction: "rt" })
-              }
-            }}
-          />
-          <div
-            className={`${cls.marker_up} ${
-              selectedChain?.element_id === element.element_id &&
-              selectedChain?.direction === "up" &&
-              cls.selected_marker
-            }`}
-            onClick={() => {
-              if (
-                selectedChain &&
-                selectedChain.element_id !== element.element_id
-              ) {
-                handleChain(selectedChain, { ...element, direction: "up" })
-                setSelectedChain(null)
-              } else {
-                setSelectedChain({ ...element, direction: "up" })
-              }
-            }}
-          />
-          <div
-            className={`${cls.marker_bottom} ${
-              selectedChain?.element_id === element.element_id &&
-              selectedChain?.direction === "bt" &&
-              cls.selected_marker
-            }`}
-            onClick={() => {
-              if (
-                selectedChain &&
-                selectedChain.element_id !== element.element_id
-              ) {
-                handleChain(selectedChain, { ...element, direction: "bt" })
-                setSelectedChain(null)
-              } else {
-                setSelectedChain({ ...element, direction: "bt" })
-              }
-            }}
-          />
+            className={cls.popover_div}
+            style={{ marginTop: "15px" }}
+          >
+            <Button
+              type="text"
+              icon={<DeleteOutlined />}
+              className={cls.button_control}
+              onClick={() => {
+                handleDelete(element)
+              }}
+            >
+              Удалить
+            </Button>
+          </div>
         </>
-      )}
-      <div className={cls.element_inner}></div>
-    </div>
+      }
+      open={thisElementClicked}
+    >
+      <div
+        style={{
+          transform: `translate(${element.left}px, ${element.top}px)`,
+          width: ELEM_WIDTH,
+          height: ELEM_HEIGHT
+        }}
+        className={`${cls.element}`}
+        draggable
+        onDragStart={handleDragStart}
+        onDrag={handleDrag}
+        onDragEnd={handleDragEnd}
+        ref={elementRef}
+        onClick={() => {
+          if (thisElementClicked) {
+            setClickedElement(null)
+          } else {
+            setClickedElement({
+              element
+            })
+          }
+        }}
+      >
+        {(thisElementClicked || thisElementNotChained) &&
+          ELEMENT_MARKER_TYPES.map((markerType) => (
+            <div
+              className={identifyMarkerCls(markerType)}
+              onClick={(e) => {
+                e.stopPropagation()
+                if (
+                  selectedChain &&
+                  selectedChain.elementId !== element.elementId
+                ) {
+                  handleChain(selectedChain, {
+                    ...element,
+                    direction: markerType
+                  })
+                  setSelectedChain(null)
+                  setClickedElement(null)
+                } else {
+                  setSelectedChain({ ...element, direction: markerType })
+                  setClickedElement(null)
+                }
+              }}
+            />
+          ))}
+        {thisElementIsChained &&
+          ELEMENT_MARKER_TYPES.map((markerType) => {
+            if (markerType === selectedChain!.direction) {
+              return (
+                <div
+                  className={`${identifyMarkerCls(markerType)} ${
+                    cls.selected_marker
+                  }`}
+                />
+              )
+            }
+            return <></>
+          })}
+        <div className={cls.element_inner}></div>
+      </div>
+    </Popover>
   )
 }

@@ -1,10 +1,8 @@
-import { useState } from "react"
 import {
   ChainLayerElement,
-  ElementGap,
+  IClickedElement,
   LayerArrow,
-  LayerElement,
-  LayerType
+  LayerElement
 } from "../../model/types/FlowchartContainer"
 import { Arrow } from "../Arrow/Arrow"
 import { Element } from "../Element/Element"
@@ -12,13 +10,10 @@ import cls from "./Layer.module.css"
 
 interface LayerProps {
   width: number
-  zoom: number
   height: number
-  type: LayerType
   elements: LayerElement[]
   arrows: LayerArrow[]
-  setType: (p: LayerType) => void
-  handleMove: (props: ElementGap, endMove: boolean) => void
+  handleMove: (props: LayerElement, end: boolean) => void
   handleDelete: (item: LayerElement | LayerArrow) => void
   handleSave: (el: any) => void
   handleChain: (
@@ -26,11 +21,14 @@ interface LayerProps {
     chainedElementTo: ChainLayerElement
   ) => void
   containerRef: React.RefObject<HTMLDivElement>
+  setClickedElement: (p: IClickedElement | null) => void
+  clickedElement: IClickedElement | null
+  selectedChain: ChainLayerElement | null
+  setSelectedChain: (p: ChainLayerElement | null) => void
 }
 
 export const Layer = (props: LayerProps) => {
   const {
-    type,
     height,
     width,
     elements,
@@ -38,41 +36,41 @@ export const Layer = (props: LayerProps) => {
     handleDelete,
     handleMove,
     handleChain,
-    setType,
-    zoom,
     arrows,
-    containerRef
+    containerRef,
+    setClickedElement,
+    clickedElement,
+    selectedChain,
+    setSelectedChain
   } = props
-
-  const [selected, setSelected] = useState<LayerElement | null>(null)
-  const [selectedChain, setSelectedChain] = useState<ChainLayerElement | null>(
-    null
-  )
 
   return (
     <>
-      <div className={cls.Layer} style={{ width, height }}>
+      <div
+        className={cls.Layer}
+        style={{ width, height }}
+      >
         {elements?.map((element) => (
           <Element
-            key={element.element_id}
+            key={element.elementId}
             element={element}
-            setSelected={setSelected}
             handleDelete={handleDelete}
-            type={type}
             handleMove={handleMove}
-            selected={selected}
             containerRef={containerRef}
             selectedChain={selectedChain}
             setSelectedChain={setSelectedChain}
             handleChain={handleChain}
+            setClickedElement={setClickedElement}
+            clickedElement={clickedElement}
+            handleSave={handleSave}
           />
         ))}
         {arrows.map((arrow) => {
           const elementFrom = elements.find(
-            (element) => arrow.id_from === element.element_id
+            (element) => arrow.idElementFrom === element.elementId
           )!
           const elementTo = elements.find(
-            (element) => arrow.id_to === element.element_id
+            (element) => arrow.idElementTo === element.elementId
           )!
           return (
             <Arrow
@@ -80,7 +78,8 @@ export const Layer = (props: LayerProps) => {
               elementFrom={elementFrom}
               elementTo={elementTo}
               handleDelete={handleDelete}
-              type={type}
+              setClickedElement={setClickedElement}
+              clickedElement={clickedElement}
             />
           )
         })}

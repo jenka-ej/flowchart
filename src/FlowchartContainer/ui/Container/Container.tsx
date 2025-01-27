@@ -1,22 +1,12 @@
-import {
-  DeleteOutlined,
-  EditOutlined,
-  FullscreenOutlined,
-  NodeIndexOutlined,
-  PlusOutlined,
-  RedoOutlined,
-  SwitcherOutlined,
-  UndoOutlined
-} from "@ant-design/icons"
+import { PlusOutlined, RedoOutlined, UndoOutlined } from "@ant-design/icons"
 import { Button, Popover } from "antd"
 import { memo, useRef, useState } from "react"
-import { ELEM_HEIGHT, ELEM_WIDTH } from "../../const"
+import { ELEM_WIDTH } from "../../const"
 import {
   ChainLayerElement,
-  ElementGap,
+  IClickedElement,
   LayerArrow,
-  LayerElement,
-  LayerType
+  LayerElement
 } from "../../model/types/FlowchartContainer"
 import { Layer } from "../Layer/Layer"
 import cls from "./Container.module.css"
@@ -24,31 +14,30 @@ import cls from "./Container.module.css"
 interface IAvailableState {
   elements: LayerElement[]
   arrows: LayerArrow[]
-  layerSize: { x: number; y: number }
   active: boolean
 }
 
 export const Container = memo(() => {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [zoom, setZoom] = useState(100)
   const [arrows, setArrows] = useState<LayerArrow[]>([])
   const [elements, setElements] = useState<LayerElement[]>([])
   const [availableStates, setAvailableStates] = useState<IAvailableState[]>([
     {
       elements: [],
       arrows: [],
-      layerSize: {
-        x: ELEM_WIDTH * 10,
-        y: ELEM_HEIGHT * 10
-      },
       active: true
     }
   ])
-  const [type, setType] = useState<LayerType>(LayerType.DRG)
   const [layerSize, setLayerSize] = useState({
-    x: ELEM_WIDTH * 10,
-    y: ELEM_HEIGHT * 10
+    x: 2000,
+    y: 1000
   })
+  const [clickedElement, setClickedElement] = useState<IClickedElement | null>(
+    null
+  )
+  const [selectedChain, setSelectedChain] = useState<ChainLayerElement | null>(
+    null
+  )
 
   const handleState = (
     prev: IAvailableState[],
@@ -84,9 +73,9 @@ export const Container = memo(() => {
     const newElement: LayerElement = {
       left: ELEM_WIDTH + containerRef.current!.scrollLeft,
       top: ELEM_WIDTH + containerRef.current!.scrollTop,
-      element_id: Date.now(),
-      element_data: {
-        node_id: Date.now()
+      elementId: Date.now(),
+      elementData: {
+        type: "BLOCK"
       }
     }
 
@@ -97,29 +86,39 @@ export const Container = memo(() => {
   }
 
   const handleSave = (element: LayerElement) => {
+    setAvailableStates((prev) =>
+      handleState(
+        prev,
+        "elements",
+        elements.map((el) =>
+          el.elementId === element.elementId ? { ...el, ...element } : el
+        )
+      )
+    )
     setElements((prev) => {
       return prev.map((el) =>
-        el.element_id === element.element_id
-          ? { ...el, element_data: element }
-          : el
+        el.elementId === element.elementId ? { ...el, ...element } : el
       )
     })
   }
 
-  const handleMove = (props: ElementGap, endMove: boolean) => {
-    const { element_id, left, top } = props
+  const handleMove = (element: LayerElement, end: boolean) => {
+    const { elementId, left, top } = element
 
-    if (endMove) {
+    if (end) {
       setAvailableStates((prev) =>
         handleState(
           prev,
           "elements",
           elements.map((el) =>
-            el.element_id === element_id ? { ...el, left, top } : el
+            el.elementId === elementId ? { ...el, left, top } : el
           ),
           "arrows",
           arrows.map((arrow) => {
-            if (arrow.id_from === element_id || arrow.id_to === element_id) {
+            if (
+              arrow.idElementFrom === elementId ||
+              arrow.idElementTo === elementId
+            ) {
               return { ...arrow }
             }
             return arrow
@@ -129,7 +128,7 @@ export const Container = memo(() => {
     } else {
       setElements((prev) =>
         prev.map((el) =>
-          el.element_id === element_id
+          el.elementId === elementId
             ? {
                 ...el,
                 left,
@@ -140,37 +139,48 @@ export const Container = memo(() => {
       )
       setArrows((prev) =>
         prev.map((arrow) => {
-          if (arrow.id_from === element_id || arrow.id_to === element_id) {
+          if (
+            arrow.idElementFrom === elementId ||
+            arrow.idElementTo === elementId
+          ) {
             return { ...arrow }
           }
           return arrow
         })
       )
     }
+
+    if (Math.round((left * 100) / layerSize.x) > 70) {
+      setLayerSize({ ...layerSize, x: Math.round(layerSize.x + 300) })
+    }
+    if (Math.round((top * 100) / layerSize.y) > 70) {
+      setLayerSize({ ...layerSize, y: Math.round(layerSize.y + 300) })
+    }
   }
 
   const handleDelete = (item: LayerElement | LayerArrow) => {
-    if ("element_id" in item) {
+    if ("elementId" in item) {
       setAvailableStates((prev) =>
         handleState(
           prev,
           "elements",
-          elements.filter((element) => element.element_id !== item.element_id),
+          elements.filter((element) => element.elementId !== item.elementId),
           "arrows",
           arrows.filter(
             (arrow) =>
-              arrow.id_from !== item.element_id &&
-              arrow.id_to !== item.element_id
+              arrow.idElementFrom !== item.elementId &&
+              arrow.idElementTo !== item.elementId
           )
         )
       )
       setElements((prev) =>
-        prev.filter((element) => element.element_id !== item.element_id)
+        prev.filter((element) => element.elementId !== item.elementId)
       )
       setArrows((prev) =>
         prev.filter(
           (arrow) =>
-            arrow.id_from !== item.element_id && arrow.id_to !== item.element_id
+            arrow.idElementFrom !== item.elementId &&
+            arrow.idElementTo !== item.elementId
         )
       )
     } else {
@@ -180,14 +190,20 @@ export const Container = memo(() => {
           "arrows",
           arrows.filter(
             (arrow) =>
-              !(arrow.id_from === item.id_from && arrow.id_to === item.id_to)
+              !(
+                arrow.idElementFrom === item.idElementFrom &&
+                arrow.idElementTo === item.idElementTo
+              )
           )
         )
       )
       setArrows((prev) =>
         prev.filter(
           (arrow) =>
-            !(arrow.id_from === item.id_from && arrow.id_to === item.id_to)
+            !(
+              arrow.idElementFrom === item.idElementFrom &&
+              arrow.idElementTo === item.idElementTo
+            )
         )
       )
     }
@@ -203,18 +219,18 @@ export const Container = memo(() => {
         "arrows",
         arrows.some(
           (arrow) =>
-            arrow.id_from === chainedElementFrom.element_id &&
-            arrow.id_to === chainedElementTo.element_id
+            arrow.idElementFrom === chainedElementFrom.elementId &&
+            arrow.idElementTo === chainedElementTo.elementId
         )
           ? arrows
           : [
               ...arrows,
               {
-                id_from: chainedElementFrom.element_id,
-                id_to: chainedElementTo.element_id,
-                id: Date.now(),
-                pos_from: chainedElementFrom.direction,
-                pos_to: chainedElementTo.direction
+                idElementFrom: chainedElementFrom.elementId,
+                idElementTo: chainedElementTo.elementId,
+                arrowId: Date.now(),
+                positionFrom: chainedElementFrom.direction,
+                positionTo: chainedElementTo.direction
               }
             ]
       )
@@ -222,18 +238,18 @@ export const Container = memo(() => {
     setArrows((prev) =>
       prev.some(
         (arrow) =>
-          arrow.id_from === chainedElementFrom.element_id &&
-          arrow.id_to === chainedElementTo.element_id
+          arrow.idElementFrom === chainedElementFrom.elementId &&
+          arrow.idElementTo === chainedElementTo.elementId
       )
         ? prev
         : [
             ...prev,
             {
-              id_from: chainedElementFrom.element_id,
-              id_to: chainedElementTo.element_id,
-              id: Date.now(),
-              pos_from: chainedElementFrom.direction,
-              pos_to: chainedElementTo.direction
+              idElementFrom: chainedElementFrom.elementId,
+              idElementTo: chainedElementTo.elementId,
+              arrowId: Date.now(),
+              positionFrom: chainedElementFrom.direction,
+              positionTo: chainedElementTo.direction
             }
           ]
     )
@@ -242,32 +258,40 @@ export const Container = memo(() => {
   return (
     <div
       ref={containerRef}
-      style={{
-        cursor: type === LayerType.DRG ? "grab" : "auto"
-      }}
+      tabIndex={-1}
       className={cls.Container}
+      onKeyDown={(e) => {
+        if (e.code === "Escape") {
+          setClickedElement(null)
+          setSelectedChain(null)
+        } else if (e.code === "Delete") {
+          if (clickedElement) {
+            handleDelete(clickedElement.element)
+            setSelectedChain(null)
+            setClickedElement(null)
+          }
+        }
+      }}
     >
       <div className={cls.pannel_wrapper}>
         <div className={cls.panel}>
-          <Popover content="Добавить узел" trigger="hover">
+          <Popover
+            content="Добавить узел"
+            trigger="hover"
+          >
             <Button
               icon={<PlusOutlined />}
               onClick={() => {
                 handleAdd()
-                setType(LayerType.MOVE)
+                setSelectedChain(null)
+                setClickedElement(null)
               }}
             />
           </Popover>
-          <Popover content="Переместить узел/связь" trigger="hover">
-            <Button
-              icon={<SwitcherOutlined />}
-              type={type === LayerType.MOVE ? "primary" : "default"}
-              onClick={() => {
-                setType(LayerType.MOVE)
-              }}
-            />
-          </Popover>
-          <Popover content="Назад" trigger="hover">
+          <Popover
+            content="Назад"
+            trigger="hover"
+          >
             <Button
               icon={<UndoOutlined />}
               disabled={
@@ -280,17 +304,21 @@ export const Container = memo(() => {
                   availableStates.findIndex(({ active }) => active) - 1
                 setElements(availableStates[findNextStateIndex].elements)
                 setArrows(availableStates[findNextStateIndex].arrows)
-                setLayerSize(availableStates[findNextStateIndex].layerSize)
                 setAvailableStates((prev) =>
                   prev.map((state, index) => ({
                     ...state,
                     active: index === findNextStateIndex
                   }))
                 )
+                setSelectedChain(null)
+                setClickedElement(null)
               }}
             />
           </Popover>
-          <Popover content="Вперёд" trigger="hover">
+          <Popover
+            content="Вперёд"
+            trigger="hover"
+          >
             <Button
               icon={<RedoOutlined />}
               disabled={
@@ -302,49 +330,14 @@ export const Container = memo(() => {
                   availableStates.findIndex(({ active }) => active) + 1
                 setElements(availableStates[findNextStateIndex].elements)
                 setArrows(availableStates[findNextStateIndex].arrows)
-                setLayerSize(availableStates[findNextStateIndex].layerSize)
                 setAvailableStates((prev) =>
                   prev.map((state, index) => ({
                     ...state,
                     active: index === findNextStateIndex
                   }))
                 )
-              }}
-            />
-          </Popover>
-          <Popover content="Образовать связь" trigger="hover">
-            <Button
-              icon={<NodeIndexOutlined />}
-              type={type === LayerType.CHAIN ? "primary" : "default"}
-              onClick={() => {
-                setType(LayerType.CHAIN)
-              }}
-            />
-          </Popover>
-          <Popover content="Просмотреть процесс" trigger="hover">
-            <Button
-              icon={<FullscreenOutlined />}
-              type={type === LayerType.DRG ? "primary" : "default"}
-              onClick={() => {
-                setType(LayerType.DRG)
-              }}
-            />
-          </Popover>
-          <Popover content="Редактировать узел/связь" trigger="hover">
-            <Button
-              icon={<EditOutlined />}
-              type={type === LayerType.ITM ? "primary" : "default"}
-              onClick={() => {
-                setType(LayerType.ITM)
-              }}
-            />
-          </Popover>
-          <Popover content="Удалить узел/связь" trigger="hover">
-            <Button
-              icon={<DeleteOutlined />}
-              type={type === LayerType.DEL ? "primary" : "default"}
-              onClick={() => {
-                setType(LayerType.DEL)
+                setSelectedChain(null)
+                setClickedElement(null)
               }}
             />
           </Popover>
@@ -372,7 +365,6 @@ export const Container = memo(() => {
         </div>
       </div>
       <Layer
-        type={type}
         height={layerSize.y}
         width={layerSize.x}
         elements={elements}
@@ -380,10 +372,12 @@ export const Container = memo(() => {
         handleDelete={handleDelete}
         handleMove={handleMove}
         handleChain={handleChain}
-        setType={setType}
-        zoom={zoom}
         arrows={arrows}
         containerRef={containerRef}
+        setClickedElement={setClickedElement}
+        clickedElement={clickedElement}
+        selectedChain={selectedChain}
+        setSelectedChain={setSelectedChain}
       />
     </div>
   )

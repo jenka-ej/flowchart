@@ -1,24 +1,11 @@
-.Arrow {
-}
-
 .line {
   position: absolute;
   background: gray;
-  z-index: -1;
 }
 
 .bigline {
   position: absolute;
   background: #1677ff;
-  border: 2px solid #1677ff;
-  cursor: pointer !important;
-}
-
-.line_grab {
-  position: absolute;
-  background: gray;
-  z-index: -1;
-  cursor: grab !important;
 }
 
 .triangle {
@@ -35,35 +22,8 @@
 
 .bigtriangle_inner {
   display: inline-block;
-  border: 8px solid transparent;
-  border-bottom: 8px solid #1677ff;
-}
-
-.line_inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
-.line_option {
-  left: 50%;
-  top: 50%;
-  width: 20px;
-
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-
-  height: 20px;
-  font-size: var(--fs-12);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: absolute;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  background: var(--color-gray);
-  color: var(--clr-white);
+  border: 5px solid transparent;
+  border-bottom: 5px solid #1677ff;
 }
 
 .dot {

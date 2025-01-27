@@ -1,41 +1,39 @@
+export interface IElementData {
+  type:
+    | "BLOCK"
+    | "CONDITION"
+    | "BEGIN_OR_END"
+    | "SUBPROGRAM"
+    | "INPUT_OR_OUTPUT"
+    | "DISPLAY"
+    | "CYCLE"
+    | "LINK"
+}
+
 export interface LayerElement {
-  element_id: number
-  element_data?: any
+  elementId: number
+  elementData?: IElementData
   left: number
   top: number
 }
 
 export interface LayerArrow {
-  id: number
-  id_from: number
-  id_to: number
-  pos_from: "lt" | "rt" | "up" | "bt"
-  pos_to: "lt" | "rt" | "up" | "bt"
+  arrowId: number
+  idElementFrom: number
+  idElementTo: number
+  positionFrom: "lt" | "rt" | "up" | "bt"
+  positionTo: "lt" | "rt" | "up" | "bt"
 }
 
 export type ChainLayerElement = LayerElement & {
   direction: "lt" | "rt" | "up" | "bt"
 }
 
-export enum LayerType {
-  MOVE = "MOVE",
-  DRG = "DRG",
-  ITM = "ITM",
-  ADD = "ADD",
-  DEL = "DEL",
-  CHAIN = "CHAIN",
-  EDIT = "EDIT",
-  ACCESS = "ACCESS",
-  INFO = "INFO"
-}
-
-export interface ElementGap {
-  element_id: number
-  left: number
-  top: number
-}
-
 export interface ICoordinate {
   left: number
   top: number
+}
+
+export interface IClickedElement {
+  element: LayerElement | LayerArrow
 }

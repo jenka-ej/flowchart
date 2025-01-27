@@ -38,7 +38,7 @@
   top: 10px;
   left: 50%;
   z-index: 100;
-  display: none;
+  display: block;
   border-radius: 50%;
   opacity: 0.5;
   transform: translate(-50%, -10px);
@@ -53,7 +53,7 @@
   bottom: 10px;
   left: 50%;
   z-index: 100;
-  display: none;
+  display: block;
   border-radius: 50%;
   opacity: 0.5;
   transform: translate(-50%, 10px);
@@ -68,7 +68,7 @@
   bottom: 50%;
   left: 10px;
   z-index: 100;
-  display: none;
+  display: block;
   border-radius: 50%;
   opacity: 0.5;
   transform: translate(-10px, 50%);
@@ -83,22 +83,11 @@
   right: 10px;
   bottom: 50%;
   z-index: 100;
-  display: none;
+  display: block;
   border-radius: 50%;
   opacity: 0.5;
   transform: translate(10px, 50%);
   cursor: pointer;
-}
-
-.element:hover {
-  box-shadow: #1677ff 0px 1px 2px 1px;
-}
-
-.element:hover .marker_right,
-.element:hover .marker_bottom,
-.element:hover .marker_up,
-.element:hover .marker_left {
-  display: block;
 }
 
 .marker_right:hover,
@@ -111,7 +100,22 @@
 }
 
 .selected_marker {
+  z-index: 101;
   display: block;
   background: #1677ff;
   opacity: 1;
+}
+
+.popover_div {
+  width: 250px;
+  padding: 5px 0;
+  background-color: white;
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 1px 6px 1px;
+}
+
+.button_control {
+  font-size: 16px !important;
+  width: 100%;
+  text-align: left !important;
+  margin: 2px 0;
 }
