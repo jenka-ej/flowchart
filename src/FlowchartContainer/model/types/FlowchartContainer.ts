@@ -1,13 +1,5 @@
 export interface IElementData {
-  type:
-    | "BLOCK"
-    | "CONDITION"
-    | "BEGIN_OR_END"
-    | "SUBPROGRAM"
-    | "INPUT_OR_OUTPUT"
-    | "DISPLAY"
-    | "CYCLE"
-    | "LINK"
+  name: string
 }
 
 export interface LayerElement {
@@ -32,8 +24,4 @@ export type ChainLayerElement = LayerElement & {
 export interface ICoordinate {
   left: number
   top: number
-}
-
-export interface IClickedElement {
-  element: LayerElement | LayerArrow
 }

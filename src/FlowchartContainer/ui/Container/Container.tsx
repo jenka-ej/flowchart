@@ -4,7 +4,6 @@ import { memo, useRef, useState } from "react"
 import { ELEM_WIDTH } from "../../const"
 import {
   ChainLayerElement,
-  IClickedElement,
   LayerArrow,
   LayerElement
 } from "../../model/types/FlowchartContainer"
@@ -32,9 +31,9 @@ export const Container = memo(() => {
     x: 2000,
     y: 1000
   })
-  const [clickedElement, setClickedElement] = useState<IClickedElement | null>(
-    null
-  )
+  const [clickedElement, setClickedElement] = useState<
+    LayerElement | LayerArrow | null
+  >(null)
   const [selectedChain, setSelectedChain] = useState<ChainLayerElement | null>(
     null
   )
@@ -75,7 +74,7 @@ export const Container = memo(() => {
       top: ELEM_WIDTH + containerRef.current!.scrollTop,
       elementId: Date.now(),
       elementData: {
-        type: "BLOCK"
+        name: `Элемент №${elements.length + 1}`
       }
     }
 
@@ -86,15 +85,6 @@ export const Container = memo(() => {
   }
 
   const handleSave = (element: LayerElement) => {
-    setAvailableStates((prev) =>
-      handleState(
-        prev,
-        "elements",
-        elements.map((el) =>
-          el.elementId === element.elementId ? { ...el, ...element } : el
-        )
-      )
-    )
     setElements((prev) => {
       return prev.map((el) =>
         el.elementId === element.elementId ? { ...el, ...element } : el
@@ -266,7 +256,7 @@ export const Container = memo(() => {
           setSelectedChain(null)
         } else if (e.code === "Delete") {
           if (clickedElement) {
-            handleDelete(clickedElement.element)
+            handleDelete(clickedElement)
             setSelectedChain(null)
             setClickedElement(null)
           }
@@ -275,10 +265,7 @@ export const Container = memo(() => {
     >
       <div className={cls.pannel_wrapper}>
         <div className={cls.panel}>
-          <Popover
-            content="Добавить узел"
-            trigger="hover"
-          >
+          <Popover content="Добавить узел" trigger="hover">
             <Button
               icon={<PlusOutlined />}
               onClick={() => {
@@ -288,10 +275,7 @@ export const Container = memo(() => {
               }}
             />
           </Popover>
-          <Popover
-            content="Назад"
-            trigger="hover"
-          >
+          <Popover content="Назад" trigger="hover">
             <Button
               icon={<UndoOutlined />}
               disabled={
@@ -315,10 +299,7 @@ export const Container = memo(() => {
               }}
             />
           </Popover>
-          <Popover
-            content="Вперёд"
-            trigger="hover"
-          >
+          <Popover content="Вперёд" trigger="hover">
             <Button
               icon={<RedoOutlined />}
               disabled={
@@ -341,27 +322,6 @@ export const Container = memo(() => {
               }}
             />
           </Popover>
-          {/* <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center"
-            }}
-          >
-            <Button
-              icon={<MinusOutlined />}
-              onClick={() => {
-                setZoom((prev) => (prev === 50 ? prev : prev - 5))
-              }}
-            />
-            <div style={{ fontSize: "16px", color: "black" }}>{zoom} %</div>
-            <Button
-              icon={<PlusOutlined />}
-              onClick={() => {
-                setZoom((prev) => (prev === 100 ? prev : prev + 5))
-              }}
-            />
-          </div> */}
         </div>
       </div>
       <Layer
@@ -369,7 +329,6 @@ export const Container = memo(() => {
         width={layerSize.x}
         elements={elements}
         handleSave={handleSave}
-        handleDelete={handleDelete}
         handleMove={handleMove}
         handleChain={handleChain}
         arrows={arrows}

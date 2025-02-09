@@ -1,16 +1,13 @@
-import { DeleteOutlined } from "@ant-design/icons"
-import { Button, Popover, Select } from "antd"
+import { Input, Popover } from "antd"
 import { useRef, useState } from "react"
 import {
   CELL_SIZE,
   ELEM_HEIGHT,
   ELEM_WIDTH,
-  ELEMENT_MARKER_TYPES,
-  ELEMENT_TYPE_DATA
+  ELEMENT_MARKER_TYPES
 } from "../../const"
 import {
   ChainLayerElement,
-  IClickedElement,
   ICoordinate,
   LayerArrow,
   LayerElement
@@ -19,8 +16,7 @@ import cls from "./Element.module.css"
 
 interface ElementProps {
   element: LayerElement
-  handleDelete: (item: LayerElement | LayerArrow) => void
-  handleMove: (props: LayerElement, end: boolean) => void
+  handleMove: (element: LayerElement, end: boolean) => void
   containerRef: React.RefObject<HTMLDivElement>
   setSelectedChain: (p: ChainLayerElement | null) => void
   selectedChain: ChainLayerElement | null
@@ -28,9 +24,9 @@ interface ElementProps {
     chainedElementFrom: ChainLayerElement,
     chainedElementTo: ChainLayerElement
   ) => void
-  handleSave: (el: any) => void
-  setClickedElement: (p: IClickedElement | null) => void
-  clickedElement: IClickedElement | null
+  handleSave: (element: LayerElement) => void
+  setClickedElement: (p: LayerElement | LayerArrow | null) => void
+  clickedElement: LayerElement | LayerArrow | null
 }
 
 const identifyMarkerCls = (markerType: "lt" | "up" | "rt" | "bt") => {
@@ -49,7 +45,6 @@ const identifyMarkerCls = (markerType: "lt" | "up" | "rt" | "bt") => {
 export const Element = (props: ElementProps) => {
   const {
     element,
-    handleDelete,
     handleMove,
     containerRef,
     setSelectedChain,
@@ -68,8 +63,8 @@ export const Element = (props: ElementProps) => {
   const elementRef = useRef<HTMLDivElement>(null)
   const thisElementClicked = Boolean(
     clickedElement &&
-      "elementId" in clickedElement.element &&
-      clickedElement.element.elementId === element.elementId
+      "elementId" in clickedElement &&
+      clickedElement.elementId === element.elementId
   )
   const thisElementNotChained = Boolean(
     selectedChain && selectedChain?.elementId !== element.elementId
@@ -130,37 +125,15 @@ export const Element = (props: ElementProps) => {
 
   return (
     <Popover
-      placement="right"
-      overlayInnerStyle={{ boxShadow: "none" }}
-      showArrow={false}
-      content={
-        <>
-          <div className={cls.popover_div}>
-            <Select
-              onChange={(e) => {
-                handleSave({ ...element, elementData: { type: e } })
-              }}
-              options={ELEMENT_TYPE_DATA}
-            />
-          </div>
-          <div
-            className={cls.popover_div}
-            style={{ marginTop: "15px" }}
-          >
-            <Button
-              type="text"
-              icon={<DeleteOutlined />}
-              className={cls.button_control}
-              onClick={() => {
-                handleDelete(element)
-              }}
-            >
-              Удалить
-            </Button>
-          </div>
-        </>
-      }
       open={thisElementClicked}
+      content={
+        <Input
+          value={element.elementData?.name}
+          onChange={(e) => {
+            handleSave({ ...element, elementData: { name: e.target.value } })
+          }}
+        />
+      }
     >
       <div
         style={{
@@ -178,9 +151,7 @@ export const Element = (props: ElementProps) => {
           if (thisElementClicked) {
             setClickedElement(null)
           } else {
-            setClickedElement({
-              element
-            })
+            setClickedElement(element)
           }
         }}
       >
@@ -188,8 +159,7 @@ export const Element = (props: ElementProps) => {
           ELEMENT_MARKER_TYPES.map((markerType) => (
             <div
               className={identifyMarkerCls(markerType)}
-              onClick={(e) => {
-                e.stopPropagation()
+              onClick={() => {
                 if (
                   selectedChain &&
                   selectedChain.elementId !== element.elementId
@@ -220,7 +190,11 @@ export const Element = (props: ElementProps) => {
             }
             return <></>
           })}
-        <div className={cls.element_inner}></div>
+        {isDragging ? (
+          <div className={cls.element_inner_dragging} />
+        ) : (
+          <div className={cls.element_inner}>{element.elementData?.name}</div>
+        )}
       </div>
     </Popover>
   )

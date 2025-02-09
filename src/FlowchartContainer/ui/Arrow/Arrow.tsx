@@ -1,31 +1,18 @@
-import { DeleteOutlined } from "@ant-design/icons"
-import { Button, Popover } from "antd"
 import { formArrowDots, formLines, formStartEndDots } from "../../lib"
-import {
-  IClickedElement,
-  LayerArrow,
-  LayerElement
-} from "../../model/types/FlowchartContainer"
+import { LayerArrow, LayerElement } from "../../model/types/FlowchartContainer"
 import cls from "./Arrow.module.css"
 
 interface ArrowProps {
   arrow: LayerArrow
   elementFrom: LayerElement
   elementTo: LayerElement
-  handleDelete: (item: LayerElement | LayerArrow) => void
-  setClickedElement: (p: IClickedElement | null) => void
-  clickedElement: IClickedElement | null
+  setClickedElement: (p: LayerElement | LayerArrow | null) => void
+  clickedElement: LayerElement | LayerArrow | null
 }
 
 export const Arrow = (props: ArrowProps) => {
-  const {
-    arrow,
-    elementFrom,
-    elementTo,
-    handleDelete,
-    setClickedElement,
-    clickedElement
-  } = props
+  const { arrow, elementFrom, elementTo, setClickedElement, clickedElement } =
+    props
   const { end } = formStartEndDots(
     elementFrom,
     elementTo,
@@ -35,8 +22,8 @@ export const Arrow = (props: ArrowProps) => {
 
   const thisArrowClicked = Boolean(
     clickedElement &&
-      "arrowId" in clickedElement.element &&
-      clickedElement.element.arrowId === arrow.arrowId
+      "arrowId" in clickedElement &&
+      clickedElement.arrowId === arrow.arrowId
   )
 
   let arrowStyles = {
@@ -77,31 +64,7 @@ export const Arrow = (props: ArrowProps) => {
   const { lines } = formLines(dots!)
 
   return (
-    <Popover
-      placement="right"
-      overlayInnerStyle={{ boxShadow: "none" }}
-      showArrow={false}
-      content={
-        <>
-          <div
-            className={cls.popover_div}
-            style={{ marginTop: "15px" }}
-          >
-            <Button
-              type="text"
-              icon={<DeleteOutlined />}
-              className={cls.button_control}
-              onClick={() => {
-                handleDelete(arrow)
-              }}
-            >
-              Удалить
-            </Button>
-          </div>
-        </>
-      }
-      open={thisArrowClicked}
-    >
+    <>
       {lines.map((line, i) => {
         return (
           <div
@@ -114,9 +77,7 @@ export const Arrow = (props: ArrowProps) => {
               if (thisArrowClicked) {
                 setClickedElement(null)
               } else {
-                setClickedElement({
-                  element: arrow
-                })
+                setClickedElement(arrow)
               }
             }}
           />
@@ -132,6 +93,6 @@ export const Arrow = (props: ArrowProps) => {
           }
         />
       </div>
-    </Popover>
+    </>
   )
 }

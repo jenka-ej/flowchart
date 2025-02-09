@@ -1,92 +1,110 @@
 .element {
   position: absolute;
-  z-index: 100;
-  border-radius: 10px;
-  box-shadow: rgba(0, 0, 0, 0.15) 0px 1px 6px 1px;
+  z-index: 2;
+  border-radius: 20px;
+  box-shadow: rgba(128, 127, 127, 0.15) 0px 1px 6px 1px;
 }
 
 .element_inner {
   width: 100%;
   height: 100%;
   position: relative;
-  padding: 7px;
-
   overflow: hidden;
+  color: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.element_outer {
+.skeleton {
+  background: linear-gradient(
+      90deg,
+      rgba(231, 231, 231, 0.667) 40%,
+      #f8f8f8aa,
+      rgba(231, 231, 231, 0.667) 60%
+    )
+    right / 300% 100%;
+}
+
+@keyframes skeleton-loading {
+  to {
+    background-position: left;
+  }
+}
+
+.element_inner_dragging {
   width: 100%;
   height: 100%;
   position: relative;
-}
-
-.selected_element {
-  border: 1px dashed var(--secondary-color);
-  border-radius: var(--br-1);
-}
-
-.unselected_element {
-  border: 0;
-  border-radius: 0;
+  overflow: hidden;
+  color: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+      90deg,
+      rgba(231, 231, 231, 0.667) 40%,
+      #f8f8f8aa,
+      rgba(231, 231, 231, 0.667) 60%
+    )
+    right / 300% 100%;
+  animation: skeleton-loading 1.5s linear infinite;
+  border-radius: 20px;
 }
 
 .marker_up {
-  width: 20px;
-  height: 20px;
+  width: 10px;
+  height: 10px;
   background: gray;
   position: absolute;
   top: 10px;
-  left: 50%;
-  z-index: 100;
+  left: 94px;
+  z-index: 2;
   display: block;
   border-radius: 50%;
   opacity: 0.5;
-  transform: translate(-50%, -10px);
   cursor: pointer;
 }
 
 .marker_bottom {
-  width: 20px;
-  height: 20px;
+  width: 10px;
+  height: 10px;
   background: gray;
   position: absolute;
   bottom: 10px;
-  left: 50%;
-  z-index: 100;
+  left: 94px;
+  z-index: 2;
   display: block;
   border-radius: 50%;
   opacity: 0.5;
-  transform: translate(-50%, 10px);
   cursor: pointer;
 }
 
 .marker_left {
-  width: 20px;
-  height: 20px;
+  width: 10px;
+  height: 10px;
   background: gray;
   position: absolute;
-  bottom: 50%;
+  bottom: 46px;
   left: 10px;
-  z-index: 100;
+  z-index: 2;
   display: block;
   border-radius: 50%;
   opacity: 0.5;
-  transform: translate(-10px, 50%);
   cursor: pointer;
 }
 
 .marker_right {
-  width: 20px;
-  height: 20px;
+  width: 10px;
+  height: 10px;
   background: gray;
   position: absolute;
   right: 10px;
-  bottom: 50%;
-  z-index: 100;
+  bottom: 46px;
+  z-index: 2;
   display: block;
   border-radius: 50%;
   opacity: 0.5;
-  transform: translate(10px, 50%);
   cursor: pointer;
 }
 
@@ -100,7 +118,7 @@
 }
 
 .selected_marker {
-  z-index: 101;
+  z-index: 3;
   display: block;
   background: #1677ff;
   opacity: 1;
@@ -111,11 +129,4 @@
   padding: 5px 0;
   background-color: white;
   box-shadow: rgba(0, 0, 0, 0.15) 0px 1px 6px 1px;
-}
-
-.button_control {
-  font-size: 16px !important;
-  width: 100%;
-  text-align: left !important;
-  margin: 2px 0;
 }

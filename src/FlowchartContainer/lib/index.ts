@@ -7,13 +7,13 @@ export const coordinateForPosition = (
   position: "lt" | "rt" | "up" | "bt"
 ) => {
   if (position === "lt") {
-    return createDot(element.left, element.top + 50)
+    return createDot(element.left - 10, element.top + 50)
   } else if (position === "rt") {
-    return createDot(element.left + 200, element.top + 50)
+    return createDot(element.left + 210, element.top + 50)
   } else if (position === "up") {
-    return createDot(element.left + 100, element.top)
+    return createDot(element.left + 100, element.top - 10)
   } else {
-    return createDot(element.left + 100, element.top + 100)
+    return createDot(element.left + 100, element.top + 110)
   }
 }
 

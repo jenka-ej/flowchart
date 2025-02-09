@@ -1,6 +1,5 @@
 import {
   ChainLayerElement,
-  IClickedElement,
   LayerArrow,
   LayerElement
 } from "../../model/types/FlowchartContainer"
@@ -13,16 +12,15 @@ interface LayerProps {
   height: number
   elements: LayerElement[]
   arrows: LayerArrow[]
-  handleMove: (props: LayerElement, end: boolean) => void
-  handleDelete: (item: LayerElement | LayerArrow) => void
-  handleSave: (el: any) => void
+  handleMove: (element: LayerElement, end: boolean) => void
+  handleSave: (element: LayerElement) => void
   handleChain: (
     chainedElementFrom: ChainLayerElement,
     chainedElementTo: ChainLayerElement
   ) => void
   containerRef: React.RefObject<HTMLDivElement>
-  setClickedElement: (p: IClickedElement | null) => void
-  clickedElement: IClickedElement | null
+  setClickedElement: (p: LayerElement | LayerArrow | null) => void
+  clickedElement: LayerElement | LayerArrow | null
   selectedChain: ChainLayerElement | null
   setSelectedChain: (p: ChainLayerElement | null) => void
 }
@@ -33,7 +31,6 @@ export const Layer = (props: LayerProps) => {
     width,
     elements,
     handleSave,
-    handleDelete,
     handleMove,
     handleChain,
     arrows,
@@ -46,15 +43,11 @@ export const Layer = (props: LayerProps) => {
 
   return (
     <>
-      <div
-        className={cls.Layer}
-        style={{ width, height }}
-      >
+      <div className={cls.Layer} style={{ width, height }}>
         {elements?.map((element) => (
           <Element
             key={element.elementId}
             element={element}
-            handleDelete={handleDelete}
             handleMove={handleMove}
             containerRef={containerRef}
             selectedChain={selectedChain}
@@ -77,7 +70,6 @@ export const Layer = (props: LayerProps) => {
               arrow={arrow}
               elementFrom={elementFrom}
               elementTo={elementTo}
-              handleDelete={handleDelete}
               setClickedElement={setClickedElement}
               clickedElement={clickedElement}
             />

@@ -3,15 +3,44 @@
   background: gray;
 }
 
+.line:before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  border: 4px solid transparent;
+  pointer-events: auto;
+}
+
+.line:hover:before {
+  cursor: pointer;
+}
+
 .bigline {
   position: absolute;
   background: #1677ff;
+  z-index: 1;
+}
+
+.bigline:before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  border: 4px solid transparent;
+  pointer-events: auto;
+}
+
+.bigline:hover:before {
+  cursor: pointer;
 }
 
 .triangle {
   position: absolute;
-  /* transform: translate(-50%, -50%); */
-  z-index: -1;
 }
 
 .triangle_inner {
@@ -24,14 +53,5 @@
   display: inline-block;
   border: 5px solid transparent;
   border-bottom: 5px solid #1677ff;
-}
-
-.dot {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  background: gray;
-  border-radius: 50%;
-  border: 2px solid gray;
-  transform: translate(-50%, -50%);
+  z-index: 1;
 }
