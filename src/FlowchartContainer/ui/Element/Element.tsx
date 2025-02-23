@@ -159,7 +159,8 @@ export const Element = (props: ElementProps) => {
           ELEMENT_MARKER_TYPES.map((markerType) => (
             <div
               className={identifyMarkerCls(markerType)}
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation()
                 if (
                   selectedChain &&
                   selectedChain.elementId !== element.elementId

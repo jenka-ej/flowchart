@@ -3,6 +3,7 @@
   z-index: 2;
   border-radius: 20px;
   box-shadow: rgba(128, 127, 127, 0.15) 0px 1px 6px 1px;
+  background-color: white;
 }
 
 .element_inner {
@@ -57,8 +58,9 @@
   height: 10px;
   background: gray;
   position: absolute;
-  top: 10px;
-  left: 94px;
+  border: 5px solid rgba(255, 255, 255, 1);
+  top: 5px;
+  left: 89px;
   z-index: 2;
   display: block;
   border-radius: 50%;
@@ -71,8 +73,9 @@
   height: 10px;
   background: gray;
   position: absolute;
-  bottom: 10px;
-  left: 94px;
+  border: 5px solid rgba(255, 255, 255, 1);
+  bottom: 5px;
+  left: 89px;
   z-index: 2;
   display: block;
   border-radius: 50%;
@@ -85,8 +88,9 @@
   height: 10px;
   background: gray;
   position: absolute;
-  bottom: 46px;
-  left: 10px;
+  border: 5px solid rgba(255, 255, 255, 1);
+  bottom: 41px;
+  left: 5px;
   z-index: 2;
   display: block;
   border-radius: 50%;
@@ -99,8 +103,9 @@
   height: 10px;
   background: gray;
   position: absolute;
-  right: 10px;
-  bottom: 46px;
+  border: 5px solid rgba(255, 255, 255, 1);
+  right: 5px;
+  bottom: 41px;
   z-index: 2;
   display: block;
   border-radius: 50%;
@@ -122,11 +127,4 @@
   display: block;
   background: #1677ff;
   opacity: 1;
-}
-
-.popover_div {
-  width: 250px;
-  padding: 5px 0;
-  background-color: white;
-  box-shadow: rgba(0, 0, 0, 0.15) 0px 1px 6px 1px;
 }
