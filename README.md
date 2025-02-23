@@ -9,9 +9,16 @@ git clone https://github.com/jenka-ej/flowchart.git
 ```
 
 ### Starting:
+Change directory
 ```
 cd flowchart
+```
+Install dependencies
+```
 npm install
+```
+Run
+```
 npm run start
 ```
 
