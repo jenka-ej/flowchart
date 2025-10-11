@@ -1,0 +1,37 @@
+.element {
+  position: absolute;
+  z-index: 2;
+  border-radius: 14px;
+  user-select: none;
+}
+
+.element:hover {
+  cursor: pointer;
+}
+
+.element_inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  font-size: 12px;
+}
+
+.element_inner_text {
+  position: absolute;
+  width: 110px;
+  left: -5px;
+  bottom: -40px;
+  font-size: 12px;
+  pointer-events: none;
+  text-align: center;
+}
+
+.element_inner_id {
+  position: absolute;
+  font-size: 10px;
+  color: red;
+  bottom: 5px;
+  right: 10px;
+  pointer-events: none;
+  user-select: none;
+}

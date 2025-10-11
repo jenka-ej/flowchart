@@ -1,98 +1,79 @@
-import { formArrowDots, formLines, formStartEndDots } from "../../lib"
-import { LayerArrow, LayerElement } from "../../model/types/FlowchartContainer"
-import cls from "./Arrow.module.css"
+import { IArrowProps } from "../../model/types"
+import { Dot } from "../Dot/Dot"
+import { useArrow } from "./lib/useArrow"
 
-interface ArrowProps {
-  arrow: LayerArrow
-  elementFrom: LayerElement
-  elementTo: LayerElement
-  setClickedElement: (p: LayerElement | LayerArrow | null) => void
-  clickedElement: LayerElement | LayerArrow | null
-}
-
-export const Arrow = (props: ArrowProps) => {
-  const { arrow, elementFrom, elementTo, setClickedElement, clickedElement } =
-    props
-  const { end } = formStartEndDots(
-    elementFrom,
-    elementTo,
-    arrow.positionFrom,
-    arrow.positionTo
-  )
-
-  const thisArrowClicked = Boolean(
-    clickedElement &&
-      "arrowId" in clickedElement &&
-      clickedElement.arrowId === arrow.arrowId
-  )
-
-  let arrowStyles = {
-    left:
-      arrow.positionTo === "lt"
-        ? end.left - 1
-        : arrow.positionTo === "up"
-        ? end.left - 6
-        : arrow.positionTo === "rt"
-        ? end.left - 9
-        : end.left - 6,
-    top:
-      arrow.positionTo === "lt"
-        ? end.top - 13
-        : arrow.positionTo === "up"
-        ? end.top - 8
-        : arrow.positionTo === "rt"
-        ? end.top - 13
-        : end.top - 16,
-    rotate: `${
-      arrow.positionTo === "lt"
-        ? 90
-        : arrow.positionTo === "up"
-        ? 180
-        : arrow.positionTo === "rt"
-        ? 270
-        : 0
-    }deg`
-  }
-
-  let dots = formArrowDots(
-    elementFrom,
-    elementTo,
-    arrow.positionFrom,
-    arrow.positionTo
-  )
-
-  const { lines } = formLines(dots!)
+export const Arrow = (props: IArrowProps) => {
+  const {
+    arrow,
+    d,
+    setClickedItem,
+    thisArrowClicked,
+    lineColor,
+    handleClickArrow,
+    handleAddTemporaryDots,
+    handleMoveDotStart,
+    handleMoveDot,
+    handleMoveDotEnd,
+    containerRef,
+    staticOffset,
+    handleDeleteTemporaryDots,
+    setShowElementOptions,
+    zoom
+  } = useArrow(props)
 
   return (
     <>
-      {lines.map((line, i) => {
-        return (
-          <div
-            key={i}
-            className={thisArrowClicked ? cls.bigline : cls.line}
-            style={{
-              ...line?.styles
-            }}
-            onClick={() => {
-              if (thisArrowClicked) {
-                setClickedElement(null)
-              } else {
-                setClickedElement(arrow)
-              }
-            }}
-          />
-        )
-      })}
-      <div
-        className={cls.triangle}
-        style={arrowStyles}
-      >
-        <div
-          className={
-            thisArrowClicked ? cls.bigtriangle_inner : cls.triangle_inner
-          }
+      {/* Определяем маркер (конец стрелки) */}
+      <defs>
+        <marker
+          id={`arrowhead${arrow.arrowId}`}
+          markerWidth="4" // в 2 раза меньше
+          markerHeight="5"
+          refX="4"
+          refY="2.5"
+          orient="auto"
+        >
+          <polygon points="0 0, 4 2.5, 0 5" fill={lineColor()} />
+        </marker>
+      </defs>
+
+      <g>
+        {/* Линия (path) с маркером на конце */}
+        <path
+          d={d}
+          fill="none"
+          stroke={lineColor()}
+          strokeWidth={2}
+          markerEnd={`url(#arrowhead${arrow.arrowId})`}
         />
-      </div>
+
+        {/* Невидимая широкая линия для кликов */}
+        <path
+          d={d}
+          fill="none"
+          stroke="transparent"
+          strokeWidth={8} // 2px основная + по 3px "поля" с каждой стороны
+          onClick={handleClickArrow}
+          style={{ cursor: "pointer" }}
+        />
+
+        {/* Точки */}
+        {thisArrowClicked &&
+          arrow.dots.map((dot) => (
+            <Dot
+              key={dot.dotId}
+              arrow={arrow}
+              dot={dot}
+              handleMoveDotStart={handleMoveDotStart}
+              handleMoveDot={handleMoveDot}
+              handleMoveDotEnd={handleMoveDotEnd}
+              lineColor={lineColor}
+              containerRef={containerRef}
+              staticOffset={staticOffset}
+              zoom={zoom}
+            />
+          ))}
+      </g>
     </>
   )
 }
