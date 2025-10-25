@@ -21,7 +21,7 @@ export const ElementPanel = ({
       <div
         style={{
           position: "absolute",
-          transform: `translate(${element.left - 22}px, ${element.top - 60}px)`,
+          transform: `translate(${element.left - 62}px, ${element.top - 70}px)`,
           padding: "10px",
           backgroundColor: "#FFFFFF",
           borderRadius: "10px",

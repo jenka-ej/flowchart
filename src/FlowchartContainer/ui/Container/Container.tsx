@@ -5,7 +5,6 @@ import { useContainer } from "./lib/useContainer"
 import { BaseContainerPanel } from "./ui/BaseContainerPanel"
 import { ClickedItemInformation } from "./ui/ClickedItemInfromation"
 import { PointGridBackground } from "./ui/PointGridBackground"
-import { ZoomInformation } from "./ui/ZoomInformation"
 
 export const Container = () => {
   const {
@@ -24,15 +23,10 @@ export const Container = () => {
     setSelectedChain,
     handleAddElement,
     handleDeleteItem,
-    handleChain,
-    handleMoveDotStart,
-    handleMoveDot,
-    handleMoveDotEnd,
+    handleChainFinal,
     handleUndoOrRedoMove,
     elementIdsConnectedWithClickedElement,
-    handleKeyPress,
-    zoom,
-    handleWheel
+    handleKeyPress
   } = useContainer()
 
   return (
@@ -51,25 +45,15 @@ export const Container = () => {
         arrows={arrows}
       />
 
-      {/* Информация о масштабе */}
-      <ZoomInformation zoom={zoom} />
-
       {/* Компонент container, как окошко внутри которого скролл */}
-      <div
-        ref={containerRef}
-        tabIndex={-1}
-        className={styles.Container}
-        onWheel={handleWheel}
-      >
+      <div ref={containerRef} tabIndex={-1} className={styles.Container}>
         {/* Компонент layer, который является огромным полотном с элементами и стрелками */}
         <div
           ref={layerRef}
           className={styles.Layer}
           style={{
-            width: layerSize.x * zoom,
-            height: layerSize.y * zoom,
-            transformOrigin: "0, 0",
-            transform: `scale(${zoom})`
+            width: layerSize.x,
+            height: layerSize.y
           }}
         >
           {/* Задний фон для полотна */}
@@ -85,7 +69,7 @@ export const Container = () => {
               containerRef={containerRef}
               selectedChain={selectedChain}
               setSelectedChain={setSelectedChain}
-              handleChain={handleChain}
+              handleChainFinal={handleChainFinal}
               handleDeleteItem={handleDeleteItem}
               clickedItem={clickedItem}
               setClickedItem={setClickedItem}
@@ -95,7 +79,18 @@ export const Container = () => {
                     element.elementId
                   )
               )}
-              zoom={zoom}
+              chainSelectedAndThisElementIsChained={Boolean(
+                selectedChain && selectedChain.elementId === element.elementId
+              )}
+              chainSelectedAndThisElementNotChained={Boolean(
+                selectedChain &&
+                  selectedChain.elementId !== element.elementId &&
+                  !arrows.find(
+                    (arrow) =>
+                      arrow.idElementFrom === selectedChain.elementId &&
+                      arrow.idElementTo === element.elementId
+                  )
+              )}
             />
           ))}
 
@@ -114,7 +109,8 @@ export const Container = () => {
               <Arrow
                 key={arrow.arrowId}
                 arrow={arrow}
-                containerRef={containerRef}
+                arrows={arrows}
+                elements={elements}
                 elementFrom={
                   elements.find(
                     (element) => arrow.idElementFrom === element.elementId
@@ -127,10 +123,6 @@ export const Container = () => {
                 }
                 clickedItem={clickedItem}
                 setClickedItem={setClickedItem}
-                handleMoveDotStart={handleMoveDotStart}
-                handleMoveDot={handleMoveDot}
-                handleMoveDotEnd={handleMoveDotEnd}
-                zoom={zoom}
               />
             ))}
           </svg>

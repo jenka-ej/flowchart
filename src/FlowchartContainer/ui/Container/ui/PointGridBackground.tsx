@@ -1,7 +1,7 @@
-import React, { useEffect, useRef } from "react"
+import { useEffect, useRef } from "react"
 import { VISIBLE_CELL_SIZE } from "../../../const"
 
-interface IPointGridBackground {
+interface IPointGridBackgroundProps {
   dotColor?: string
   backgroundColor?: string
   gridSize?: number // размер клетки в px
@@ -9,13 +9,13 @@ interface IPointGridBackground {
   opacity?: number // Прозрачность точек (по умолчанию 0.5)
 }
 
-export const PointGridBackground: React.FC<IPointGridBackground> = ({
+export const PointGridBackground = ({
   dotColor = "#888888",
   backgroundColor = "#ffffff",
   gridSize = VISIBLE_CELL_SIZE,
   dotSize = 1,
   opacity = 0.3
-}) => {
+}: IPointGridBackgroundProps) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
 
   useEffect(() => {

@@ -1,20 +1,16 @@
-import { useEffect, useRef, useState } from "react"
+import { useRef, useState } from "react"
 import { v4 } from "uuid"
 import { ELEM_WIDTH } from "../../../const"
-import { getDefaultDots } from "../../../lib"
 import {
   IAvailableState,
   IFlowchartArrow,
   IFlowchartElement,
-  TChainFlowchartElement,
-  TFlowchartDot
+  TChainFlowchartElement
 } from "../../../model/types"
 
 export const useContainer = () => {
   const containerRef = useRef<HTMLDivElement>(null)
   const layerRef = useRef<HTMLDivElement>(null)
-
-  const [zoom, setZoom] = useState<number>(1)
 
   const [elements, setElements] = useState<IFlowchartElement[]>([])
 
@@ -29,8 +25,8 @@ export const useContainer = () => {
   ])
 
   const [layerSize, setLayerSize] = useState({
-    x: 2000,
-    y: 1000
+    x: 4000,
+    y: 2500
   })
 
   const [clickedItem, setClickedItem] = useState<
@@ -174,7 +170,7 @@ export const useContainer = () => {
     }
   }
 
-  const handleChain = (
+  const handleChainFinal = (
     chainedElementFrom: TChainFlowchartElement,
     chainedElementTo: TChainFlowchartElement
   ) => {
@@ -183,18 +179,7 @@ export const useContainer = () => {
       idElementTo: chainedElementTo.elementId,
       arrowId: v4(),
       positionFrom: chainedElementFrom.direction,
-      positionTo: chainedElementTo.direction,
-      dots: getDefaultDots(
-        {
-          idElementFrom: chainedElementFrom.elementId,
-          idElementTo: chainedElementTo.elementId,
-          positionFrom: chainedElementFrom.direction,
-          positionTo: chainedElementTo.direction
-        },
-        arrows,
-        elements,
-        true
-      )
+      positionTo: chainedElementTo.direction
     }
 
     setAvailableStates((mainAvailableStates) =>
@@ -220,52 +205,16 @@ export const useContainer = () => {
     )
   }
 
-  const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
-    const container = containerRef.current
-    const layer = layerRef.current
-    if (!container || !layer || !e.ctrlKey) return
-
-    e.preventDefault()
-
-    const offsetZoom = e.deltaY > 0 ? -0.05 : 0.05
-    let newZoom = Math.round((zoom + offsetZoom) * 100) / 100
-    newZoom = Math.max(1, Math.min(2, newZoom))
-    setZoom(newZoom)
-  }
-
-  const updateElement = (
-    mainElements: IFlowchartElement[],
-    element: IFlowchartElement
-  ) =>
-    mainElements.map((mainElement) =>
-      mainElement.elementId === element.elementId
-        ? {
-            ...mainElement,
-            ...element
-          }
-        : mainElement
-    )
-
   const handleMoveElement = (element: IFlowchartElement) => {
-    setElements((mainElements) => updateElement(mainElements, element))
-    setArrows((mainArrows) =>
-      mainArrows.map((mainArrow) => {
-        if (
-          mainArrow.idElementFrom === element.elementId ||
-          mainArrow.idElementTo === element.elementId
-        ) {
-          return {
-            ...mainArrow,
-            dots: getDefaultDots(
-              mainArrow,
-              arrows,
-              updateElement(elements, element),
-              false
-            )
-          }
-        }
-        return mainArrow
-      })
+    setElements((mainElements) =>
+      mainElements.map((mainElement) =>
+        mainElement.elementId === element.elementId
+          ? {
+              ...mainElement,
+              ...element
+            }
+          : mainElement
+      )
     )
   }
 
@@ -290,46 +239,6 @@ export const useContainer = () => {
         y: Math.round(layerSize.y + 300)
       }))
     }
-  }
-
-  const updateDotInArrow = (
-    mainArrows: IFlowchartArrow[],
-    arrow: IFlowchartArrow,
-    dot: TFlowchartDot,
-    changedField?: { [key: string]: any }
-  ) =>
-    mainArrows.map((mainArrow) => {
-      if (mainArrow.arrowId === arrow.arrowId) {
-        return {
-          ...mainArrow,
-          dots: mainArrow.dots.map((mainDot) => {
-            if (mainDot.dotId === dot.dotId) {
-              if (changedField) {
-                return { ...dot, ...changedField }
-              }
-              return dot
-            }
-            return mainDot
-          })
-        }
-      }
-      return mainArrow
-    })
-
-  const handleMoveDotStart = (arrow: IFlowchartArrow, dot: TFlowchartDot) => {
-    setArrows((mainArrows) =>
-      updateDotInArrow(mainArrows, arrow, dot, { type: "extra" })
-    )
-  }
-
-  const handleMoveDot = (arrow: IFlowchartArrow, dot: TFlowchartDot) => {
-    setArrows((mainArrows) => updateDotInArrow(mainArrows, arrow, dot))
-  }
-
-  const handleMoveDotEnd = () => {
-    setAvailableStates((mainAvailableStates) =>
-      handleState(mainAvailableStates, { arrows })
-    )
   }
 
   const handleUndoOrRedoMove = (type: string) => {
@@ -358,25 +267,6 @@ export const useContainer = () => {
     }
   }
 
-  useEffect(() => {
-    const handler = (e: WheelEvent) => {
-      if (e.ctrlKey) {
-        e.preventDefault()
-      }
-    }
-
-    const el = containerRef.current
-    if (el) {
-      el.addEventListener("wheel", handler, { passive: false, capture: true })
-    }
-
-    return () => {
-      if (el) {
-        el.removeEventListener("wheel", handler, true)
-      }
-    }
-  }, [])
-
   return {
     elements,
     arrows,
@@ -393,14 +283,9 @@ export const useContainer = () => {
     setSelectedChain,
     handleAddElement,
     handleDeleteItem,
-    handleChain,
-    handleMoveDotStart,
-    handleMoveDot,
-    handleMoveDotEnd,
+    handleChainFinal,
     handleUndoOrRedoMove,
     elementIdsConnectedWithClickedElement,
-    handleKeyPress,
-    zoom,
-    handleWheel
+    handleKeyPress
   }
 }

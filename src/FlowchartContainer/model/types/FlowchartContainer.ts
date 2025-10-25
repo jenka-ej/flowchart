@@ -25,7 +25,6 @@ export interface IFlowchartArrow {
   idElementTo: string
   positionFrom: "lt" | "rt"
   positionTo: "lt" | "rt"
-  dots: TFlowchartDot[]
 }
 
 export interface IFlowchartArrowWithoutDots {
@@ -53,7 +52,7 @@ export interface IElementProps {
   selectedChain: TChainFlowchartElement | null
   setSelectedChain: (p: TChainFlowchartElement | null) => void
   handleDeleteItem: (item: IFlowchartElement | IFlowchartArrow) => void
-  handleChain: (
+  handleChainFinal: (
     chainedElementFrom: TChainFlowchartElement,
     chainedElementTo: TChainFlowchartElement
   ) => void
@@ -62,22 +61,20 @@ export interface IElementProps {
     React.SetStateAction<IFlowchartElement | IFlowchartArrow | null>
   >
   thisElementIsConnectedWithClickedElement: boolean
-  zoom: number
+  chainSelectedAndThisElementIsChained: boolean
+  chainSelectedAndThisElementNotChained: boolean
 }
 
 export interface IArrowProps {
   arrow: IFlowchartArrow
-  containerRef: React.RefObject<HTMLDivElement | null>
+  arrows: IFlowchartArrow[]
+  elements: IFlowchartElement[]
   elementFrom: IFlowchartElement
   elementTo: IFlowchartElement
-  handleMoveDotStart: (arrow: IFlowchartArrow, dot: TFlowchartDot) => void
-  handleMoveDot: (arrow: IFlowchartArrow, dot: TFlowchartDot) => void
-  handleMoveDotEnd: () => void
   clickedItem: IFlowchartElement | IFlowchartArrow | null
   setClickedItem: React.Dispatch<
     React.SetStateAction<IFlowchartElement | IFlowchartArrow | null>
   >
-  zoom: number
 }
 
 export interface IDotProps {

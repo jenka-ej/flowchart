@@ -261,8 +261,8 @@ export const formArrowDots = (
 export const getDefaultDots = (
   arrow: IFlowchartArrow | IFlowchartArrowWithoutDots,
   arrows: IFlowchartArrow[],
-  elements: IFlowchartElement[],
-  arrowInCreation: boolean
+  elements: IFlowchartElement[]
+  // arrowInCreation: boolean
 ) => {
   const elementFrom = elements.find(
     (mainElement) => arrow.idElementFrom === mainElement.elementId
@@ -272,24 +272,35 @@ export const getDefaultDots = (
     (mainElement) => arrow.idElementTo === mainElement.elementId
   )!
 
-  const arrowIndex = arrowInCreation
-    ? arrows.filter(
-        (mainArrow) => mainArrow.idElementFrom === arrow.idElementFrom
-      ).length
-    : arrows
-        .filter((mainArrow) => mainArrow.idElementFrom === arrow.idElementFrom)
-        .findIndex(
-          (mainArrow) =>
-            mainArrow.arrowId === (arrow as IFlowchartArrow).arrowId
-        ) + 1
+  const arrowIndex =
+    arrows
+      .filter((mainArrow) => mainArrow.idElementFrom === arrow.idElementFrom)
+      .findIndex(
+        (mainArrow) => mainArrow.arrowId === (arrow as IFlowchartArrow).arrowId
+      ) + 1
 
-  const arrowsCount = arrowInCreation
-    ? arrows.filter(
-        (mainArrow) => mainArrow.idElementFrom === arrow.idElementFrom
-      ).length + 1
-    : arrows.filter(
-        (mainArrow) => mainArrow.idElementFrom === arrow.idElementFrom
-      ).length
+  // const arrowIndex = arrowInCreation
+  //   ? arrows.filter(
+  //       (mainArrow) => mainArrow.idElementFrom === arrow.idElementFrom
+  //     ).length
+  //   : arrows
+  //       .filter((mainArrow) => mainArrow.idElementFrom === arrow.idElementFrom)
+  //       .findIndex(
+  //         (mainArrow) =>
+  //           mainArrow.arrowId === (arrow as IFlowchartArrow).arrowId
+  //       ) + 1
+
+  const arrowsCount = arrows.filter(
+    (mainArrow) => mainArrow.idElementFrom === arrow.idElementFrom
+  ).length
+
+  // const arrowsCount = arrowInCreation
+  //   ? arrows.filter(
+  //       (mainArrow) => mainArrow.idElementFrom === arrow.idElementFrom
+  //     ).length + 1
+  //   : arrows.filter(
+  //       (mainArrow) => mainArrow.idElementFrom === arrow.idElementFrom
+  //     ).length
 
   return formArrowDots(elementFrom, elementTo, arrow, arrowIndex, arrowsCount)
 }

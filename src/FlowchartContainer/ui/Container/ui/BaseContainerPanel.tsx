@@ -3,7 +3,7 @@ import { Button } from "antd"
 import { IAvailableState } from "../../../model/types"
 import styles from "../Container.module.scss"
 
-interface IBaseContainerPanel {
+interface IBaseContainerPanelProps {
   availableStates: IAvailableState[]
   handleUndoOrRedoMove: (type: string) => void
   handleAddElement: () => void
@@ -13,7 +13,7 @@ export const BaseContainerPanel = ({
   availableStates,
   handleUndoOrRedoMove,
   handleAddElement
-}: IBaseContainerPanel) => (
+}: IBaseContainerPanelProps) => (
   <div className={styles.baseContainerPanel}>
     <Button
       className={styles.baseContainerPanel__button}

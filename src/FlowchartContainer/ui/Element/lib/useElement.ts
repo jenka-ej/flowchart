@@ -1,6 +1,10 @@
 import { useRef } from "react"
-import { calculateScaledDigit, roundDigitForPosition } from "../../../lib"
-import { ICoordinate, IElementProps } from "../../../model/types"
+import { roundDigitForPosition } from "../../../lib"
+import {
+  ICoordinate,
+  IElementProps,
+  TChainFlowchartElement
+} from "../../../model/types"
 
 export const useElement = ({
   element,
@@ -10,8 +14,12 @@ export const useElement = ({
   clickedItem,
   setClickedItem,
   handleDeleteItem,
+  selectedChain,
+  setSelectedChain,
+  handleChainFinal,
   thisElementIsConnectedWithClickedElement,
-  zoom
+  chainSelectedAndThisElementIsChained,
+  chainSelectedAndThisElementNotChained
 }: IElementProps) => {
   const mouseStartPositionForElement = useRef<ICoordinate>({
     left: 0,
@@ -36,13 +44,33 @@ export const useElement = ({
       clickedItem.elementId === element.elementId
   )
 
+  const handleChainElementStart = (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
+    e.stopPropagation()
+    setSelectedChain({ ...element, direction: "rt" })
+    setClickedItem(null)
+  }
+
+  const handleChainElementEnd = (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
+    e.stopPropagation()
+    handleChainFinal(selectedChain as TChainFlowchartElement, {
+      ...element,
+      direction: "lt"
+    })
+    setSelectedChain(null)
+    setClickedItem(null)
+  }
+
   const handlePointerDownElement = (e: React.PointerEvent<HTMLDivElement>) => {
     e.stopPropagation()
     const rect = elementRef.current!.getBoundingClientRect()
 
     mouseStartPositionForElement.current = {
-      left: calculateScaledDigit(e.clientX - rect.left, zoom),
-      top: calculateScaledDigit(e.clientY - rect.top, zoom)
+      left: e.clientX - rect.left,
+      top: e.clientY - rect.top
     }
 
     isDraggingElement.current = true
@@ -171,29 +199,8 @@ export const useElement = ({
     }
   }
 
-  // Вычисление внутренних стилей элемента в зависимости от разных состояний
-
-  const innerElementStyles = () => {
-    if (clickedItem && "elementId" in clickedItem) {
-      if (clickedItem.elementId === element.elementId) {
-        return {
-          color: "black"
-        }
-      }
-      if (thisElementIsConnectedWithClickedElement) {
-        return {
-          color: "black"
-        }
-      }
-      return {
-        color: "rgb(228 228 228)"
-      }
-    }
-  }
-
   return {
     elementStyles,
-    innerElementStyles,
     isDraggingElement,
     justDraggedElement,
     handlePointerDownElement,
@@ -201,7 +208,12 @@ export const useElement = ({
     handlePointerUpElement,
     elementRef,
     thisElementClicked,
+    chainSelectedAndThisElementIsChained,
+    chainSelectedAndThisElementNotChained,
     handleDeleteItem,
+    handleChainElementStart,
+    handleChainElementEnd,
+    selectedChain,
     element,
     clickedItem,
     setClickedItem,

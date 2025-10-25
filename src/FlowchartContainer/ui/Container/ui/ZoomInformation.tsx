@@ -1,9 +1,9 @@
 import styles from "../Container.module.scss"
 
-interface IZoomInformation {
+interface IZoomInformationProps {
   zoom: number
 }
 
-export const ZoomInformation = ({ zoom }: IZoomInformation) => (
+export const ZoomInformation = ({ zoom }: IZoomInformationProps) => (
   <div className={styles.zoomInformation}>{`${Math.round(zoom * 100)} %`}</div>
 )

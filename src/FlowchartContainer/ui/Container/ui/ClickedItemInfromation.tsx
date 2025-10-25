@@ -1,7 +1,7 @@
 import { IFlowchartArrow, IFlowchartElement } from "../../../model/types"
 import styles from "../Container.module.scss"
 
-interface IClickedItemInformation {
+interface IClickedItemInformationProps {
   clickedItem: IFlowchartElement | IFlowchartArrow | null
   elements: IFlowchartElement[]
   arrows: IFlowchartArrow[]
@@ -11,7 +11,7 @@ export const ClickedItemInformation = ({
   clickedItem,
   elements,
   arrows
-}: IClickedItemInformation) => {
+}: IClickedItemInformationProps) => {
   if (clickedItem) {
     if ("elementId" in clickedItem) {
       const previousChainedElementsId = arrows

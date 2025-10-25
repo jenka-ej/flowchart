@@ -3,19 +3,24 @@ import { IElementProps } from "../../model/types"
 import styles from "./Element.module.scss"
 import { useElement } from "./lib/useElement"
 import { ElementInnerContent } from "./ui/ElementInnerContent"
+import { ElementMarker } from "./ui/ElementMarker"
 import { ElementPanel } from "./ui/ElementPanel"
 
 export const Element = (props: IElementProps) => {
   const {
     elementStyles,
-    innerElementStyles,
     isDraggingElement,
     handlePointerDownElement,
     handlePointerMoveElement,
     handlePointerUpElement,
     elementRef,
     thisElementClicked,
+    chainSelectedAndThisElementIsChained,
+    chainSelectedAndThisElementNotChained,
     handleDeleteItem,
+    handleChainElementStart,
+    handleChainElementEnd,
+    selectedChain,
     element,
     clickedItem,
     handleClickElement
@@ -23,7 +28,6 @@ export const Element = (props: IElementProps) => {
 
   return (
     <>
-      {/* Всплывашка для элемента при нажатии */}
       <ElementPanel
         element={element}
         clickedItem={clickedItem}
@@ -31,8 +35,6 @@ export const Element = (props: IElementProps) => {
         isDraggingElement={isDraggingElement}
         handleDeleteItem={handleDeleteItem}
       />
-
-      {/* Тело элемента */}
       <div
         style={{
           transform: `translate(${element.left}px, ${element.top}px)`,
@@ -48,10 +50,20 @@ export const Element = (props: IElementProps) => {
         ref={elementRef}
         onClick={handleClickElement}
       >
-        {/* Внутренний контент элемента (название и айди) */}
+        <ElementMarker
+          thisElementClicked={thisElementClicked}
+          selectedChain={selectedChain}
+          chainSelectedAndThisElementNotChained={
+            chainSelectedAndThisElementNotChained
+          }
+          chainSelectedAndThisElementIsChained={
+            chainSelectedAndThisElementIsChained
+          }
+          handleChainElementStart={handleChainElementStart}
+          handleChainElementEnd={handleChainElementEnd}
+        />
         <ElementInnerContent
           isDraggingElement={isDraggingElement}
-          innerElementStyles={innerElementStyles}
           element={element}
         />
       </div>

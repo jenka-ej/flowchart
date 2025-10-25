@@ -20,18 +20,52 @@
   position: absolute;
   width: 110px;
   left: -5px;
-  bottom: -40px;
+  bottom: -30px;
   font-size: 12px;
   pointer-events: none;
   text-align: center;
 }
 
-.element_inner_id {
+.marker_left {
+  width: 10px;
+  height: 10px;
+  background: gray;
   position: absolute;
-  font-size: 10px;
-  color: red;
-  bottom: 5px;
-  right: 10px;
-  pointer-events: none;
-  user-select: none;
+  border: 5px solid rgba(255, 255, 255, 1);
+  bottom: 23px;
+  left: 5px;
+  z-index: 3;
+  display: block;
+  border-radius: 50%;
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+.marker_right {
+  width: 10px;
+  height: 10px;
+  background: gray;
+  position: absolute;
+  border: 5px solid rgba(255, 255, 255, 1);
+  right: 5px;
+  bottom: 23px;
+  z-index: 3;
+  display: block;
+  border-radius: 50%;
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+.marker_right:hover,
+.marker_left:hover {
+  background: #1677ff;
+  opacity: 1;
+  cursor: pointer;
+}
+
+.marker_selected {
+  z-index: 4;
+  display: block;
+  background: #1677ff;
+  opacity: 1;
 }

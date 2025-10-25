@@ -1,25 +1,8 @@
 import { IArrowProps } from "../../model/types"
-import { Dot } from "../Dot/Dot"
 import { useArrow } from "./lib/useArrow"
 
 export const Arrow = (props: IArrowProps) => {
-  const {
-    arrow,
-    d,
-    setClickedItem,
-    thisArrowClicked,
-    lineColor,
-    handleClickArrow,
-    handleAddTemporaryDots,
-    handleMoveDotStart,
-    handleMoveDot,
-    handleMoveDotEnd,
-    containerRef,
-    staticOffset,
-    handleDeleteTemporaryDots,
-    setShowElementOptions,
-    zoom
-  } = useArrow(props)
+  const { arrow, d, lineColor, handleClickArrow } = useArrow(props)
 
   return (
     <>
@@ -56,23 +39,6 @@ export const Arrow = (props: IArrowProps) => {
           onClick={handleClickArrow}
           style={{ cursor: "pointer" }}
         />
-
-        {/* Точки */}
-        {thisArrowClicked &&
-          arrow.dots.map((dot) => (
-            <Dot
-              key={dot.dotId}
-              arrow={arrow}
-              dot={dot}
-              handleMoveDotStart={handleMoveDotStart}
-              handleMoveDot={handleMoveDot}
-              handleMoveDotEnd={handleMoveDotEnd}
-              lineColor={lineColor}
-              containerRef={containerRef}
-              staticOffset={staticOffset}
-              zoom={zoom}
-            />
-          ))}
       </g>
     </>
   )
