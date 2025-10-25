@@ -9,8 +9,7 @@ interface IExtraContainerPanelProps {
 }
 
 export const ExtraContainerPanel = ({
-  clickedItem,
-  handleDeleteItem
+  clickedItem
 }: IExtraContainerPanelProps) => {
   if (clickedItem && "elementId" in clickedItem) {
     return (
