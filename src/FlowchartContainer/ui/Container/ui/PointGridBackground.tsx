@@ -4,9 +4,9 @@ import { VISIBLE_CELL_SIZE } from "../../../const"
 interface IPointGridBackgroundProps {
   dotColor?: string
   backgroundColor?: string
-  gridSize?: number // размер клетки в px
-  dotSize?: number // радиус точки
-  opacity?: number // Прозрачность точек (по умолчанию 0.5)
+  gridSize?: number
+  dotSize?: number
+  opacity?: number
 }
 
 export const PointGridBackground = ({
@@ -49,7 +49,6 @@ export const PointGridBackground = ({
 
     drawDots()
 
-    // Следим только за изменением размера родителя
     const resizeObserver = new ResizeObserver(() => drawDots())
     resizeObserver.observe(parent)
 

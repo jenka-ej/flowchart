@@ -17,6 +17,7 @@ export const Container = () => {
     layerSize,
     handleMoveElement,
     handleMoveElementEnd,
+    handleChangeElementName,
     clickedItem,
     setClickedItem,
     selectedChain,
@@ -31,14 +32,14 @@ export const Container = () => {
 
   return (
     <div style={{ position: "relative" }} onKeyDown={handleKeyPress}>
-      {/* Панель Undo и Redo слева сверху */}
+      {/* Панель Undo, Redo и Add слева сверху */}
       <BaseContainerPanel
         availableStates={availableStates}
         handleUndoOrRedoMove={handleUndoOrRedoMove}
         handleAddElement={handleAddElement}
       />
 
-      {/* Информация о кликнутом элементе справа снизу */}
+      {/* Информация о кликнутом элементе слева снизу */}
       <ClickedItemInformation
         clickedItem={clickedItem}
         elements={elements}
@@ -66,6 +67,7 @@ export const Container = () => {
               element={element}
               handleMoveElement={handleMoveElement}
               handleMoveElementEnd={handleMoveElementEnd}
+              handleChangeElementName={handleChangeElementName}
               containerRef={containerRef}
               selectedChain={selectedChain}
               setSelectedChain={setSelectedChain}

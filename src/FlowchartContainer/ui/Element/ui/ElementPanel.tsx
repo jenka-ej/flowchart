@@ -1,38 +1,51 @@
+import { DeleteOutlined } from "@ant-design/icons"
+import { Button, Input } from "antd"
 import { IFlowchartArrow, IFlowchartElement } from "../../../model/types"
-import { ExtraContainerPanel } from "../../Container/ui/ExtraContainerPanel"
+import styles from "../Element.module.scss"
 
 interface IElementPanel {
   element: IFlowchartElement
-  clickedItem: IFlowchartElement | IFlowchartArrow | null
   thisElementClicked: boolean
   isDraggingElement: React.MutableRefObject<boolean>
   handleDeleteItem: (item: IFlowchartElement | IFlowchartArrow) => void
+  handleChangeElementName: (element: IFlowchartElement) => void
 }
 
 export const ElementPanel = ({
   element,
-  clickedItem,
   thisElementClicked,
   isDraggingElement,
-  handleDeleteItem
+  handleDeleteItem,
+  handleChangeElementName
 }: IElementPanel) => {
   if (thisElementClicked && !isDraggingElement.current) {
     return (
       <div
+        className={styles.elementPanelWrapper}
         style={{
-          position: "absolute",
-          transform: `translate(${element.left - 62}px, ${element.top - 70}px)`,
-          padding: "10px",
-          backgroundColor: "#FFFFFF",
-          borderRadius: "10px",
-          boxShadow: "rgba(0, 0, 0, 0.15) 0px 0px 0px 1px",
-          zIndex: 4
+          transform: `translate(${element.left - 62}px, ${element.top - 70}px)`
         }}
       >
-        <ExtraContainerPanel
-          clickedItem={clickedItem}
-          handleDeleteItem={handleDeleteItem}
-        />
+        <div className={styles.elementInnerPanel}>
+          <Button
+            className={styles.elementInnerPanel__button}
+            onClick={() => handleDeleteItem(element)}
+          >
+            <DeleteOutlined />
+          </Button>
+          <Input
+            maxLength={14}
+            style={{ maxWidth: "130px" }}
+            variant="filled"
+            value={element.elementData.name}
+            onChange={(e) =>
+              handleChangeElementName({
+                ...element,
+                elementData: { name: e.target.value }
+              })
+            }
+          />
+        </div>
       </div>
     )
   }

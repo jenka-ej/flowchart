@@ -25,8 +25,8 @@ export const useContainer = () => {
   ])
 
   const [layerSize, setLayerSize] = useState({
-    x: 4000,
-    y: 2500
+    x: 3500,
+    y: 2000
   })
 
   const [clickedItem, setClickedItem] = useState<
@@ -145,6 +145,8 @@ export const useContainer = () => {
             mainArrow.idElementTo !== item.elementId
         )
       )
+
+      setClickedItem(null)
     } else {
       setAvailableStates((mainAvailableStates) =>
         handleState(mainAvailableStates, {
@@ -208,12 +210,7 @@ export const useContainer = () => {
   const handleMoveElement = (element: IFlowchartElement) => {
     setElements((mainElements) =>
       mainElements.map((mainElement) =>
-        mainElement.elementId === element.elementId
-          ? {
-              ...mainElement,
-              ...element
-            }
-          : mainElement
+        mainElement.elementId === element.elementId ? element : mainElement
       )
     )
   }
@@ -229,16 +226,25 @@ export const useContainer = () => {
     if (element.left + 300 > layerSize.x) {
       setLayerSize((mainLayerSize) => ({
         ...mainLayerSize,
-        x: Math.round(layerSize.x + 300)
+        x: layerSize.x + 300
       }))
     }
 
     if (element.top + 300 > layerSize.y) {
       setLayerSize((mainLayerSize) => ({
         ...mainLayerSize,
-        y: Math.round(layerSize.y + 300)
+        y: layerSize.y + 300
       }))
     }
+  }
+
+  const handleChangeElementName = (element: IFlowchartElement) => {
+    setElements((mainElements) =>
+      mainElements.map((mainElement) =>
+        mainElement.elementId === element.elementId ? element : mainElement
+      )
+    )
+    setClickedItem(element)
   }
 
   const handleUndoOrRedoMove = (type: string) => {
@@ -277,6 +283,7 @@ export const useContainer = () => {
     layerSize,
     handleMoveElement,
     handleMoveElementEnd,
+    handleChangeElementName,
     clickedItem,
     setClickedItem,
     selectedChain,

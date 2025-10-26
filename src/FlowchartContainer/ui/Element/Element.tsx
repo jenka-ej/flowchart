@@ -13,6 +13,7 @@ export const Element = (props: IElementProps) => {
     handlePointerDownElement,
     handlePointerMoveElement,
     handlePointerUpElement,
+    handleChangeElementName,
     elementRef,
     thisElementClicked,
     chainSelectedAndThisElementIsChained,
@@ -22,7 +23,6 @@ export const Element = (props: IElementProps) => {
     handleChainElementEnd,
     selectedChain,
     element,
-    clickedItem,
     handleClickElement
   } = useElement(props)
 
@@ -30,10 +30,10 @@ export const Element = (props: IElementProps) => {
     <>
       <ElementPanel
         element={element}
-        clickedItem={clickedItem}
         thisElementClicked={thisElementClicked}
         isDraggingElement={isDraggingElement}
         handleDeleteItem={handleDeleteItem}
+        handleChangeElementName={handleChangeElementName}
       />
       <div
         style={{

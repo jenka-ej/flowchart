@@ -48,6 +48,7 @@ export interface IElementProps {
   element: IFlowchartElement
   handleMoveElement: (element: IFlowchartElement) => void
   handleMoveElementEnd: (element: IFlowchartElement) => void
+  handleChangeElementName: (element: IFlowchartElement) => void
   containerRef: React.RefObject<HTMLDivElement | null>
   selectedChain: TChainFlowchartElement | null
   setSelectedChain: (p: TChainFlowchartElement | null) => void

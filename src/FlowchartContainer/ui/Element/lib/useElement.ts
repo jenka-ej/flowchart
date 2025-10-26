@@ -10,6 +10,7 @@ export const useElement = ({
   element,
   handleMoveElement,
   handleMoveElementEnd,
+  handleChangeElementName,
   containerRef,
   clickedItem,
   setClickedItem,
@@ -206,6 +207,7 @@ export const useElement = ({
     handlePointerDownElement,
     handlePointerMoveElement,
     handlePointerUpElement,
+    handleChangeElementName,
     elementRef,
     thisElementClicked,
     chainSelectedAndThisElementIsChained,
@@ -215,7 +217,6 @@ export const useElement = ({
     handleChainElementEnd,
     selectedChain,
     element,
-    clickedItem,
     setClickedItem,
     handleClickElement
   }
